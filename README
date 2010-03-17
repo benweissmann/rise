@@ -1,0 +1,7 @@
+src/ contains the default directory structure for EasyRubygame projects,
+including the framework itself.
+
+test/ contains a testbed. Running test.sh copies the current contents of
+src/ into test/, then runs the test application. Note that becuase the
+framework includes a default src/main.rb, the test application stores
+its main.rb in test/new_main.rb. Make any changes there.
