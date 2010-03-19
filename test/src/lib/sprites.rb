@@ -26,8 +26,47 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    def initialize
+    def initialize(img_src)
       super()
+      @x = 0
+      @y = 0
+      @x_velocity = 0
+      @y_velocity = 0
+      self.image = img_src
+    end
+    
+    def update
+      @x += @x_velocity
+      @y += @y_velocity
+
+      begin
+        if @x <= 0
+          @x = 0
+          self.touch_left
+        elsif @x + @rect.width >= EasyRubygame.window_width
+          @x = EasyRubygame.window_width - @rect.width
+          self.touch_right
+        end
+
+        if @y <= 0
+          @y = 0
+          self.touch_top
+        elsif @y + @rect.height >= EasyRubygame.window_height
+          @y = EasyRubygame.window_height - @rect.height
+          self.touch_bottom
+        end
+      rescue NoMethodError
+        # ignore NoMethodErrors -- the subclass might not have defined
+        # touch_* methods
+      end
+
+      @rect.topleft = @x, @y
+    end
+    
+    def image= img_src
+      @image = Surface[img_src]
+      @rect = @image.make_rect
+      @rect.topleft = @x, @y
     end
   end
 end
