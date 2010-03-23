@@ -26,16 +26,27 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
+    attr_accessor :x, :y, :x_velocity, :y_velocity
+
     def initialize(img_src)
       super()
       @x = 0
       @y = 0
       @x_velocity = 0
       @y_velocity = 0
+      @visible = true
       self.image = img_src
+
+      @@update_procs[self.class] ||= []
+      @@hooks[self.class] ||= Hash.new
+      self.make_magic_hooks @@hooks[self.class]
     end
     
     def update
+      return unless @visible
+
+      @@update_procs[self.class].each {|p| instance_eval &p}
+
       @x += @x_velocity
       @y += @y_velocity
 
@@ -61,12 +72,87 @@ module EasyRubygame
       end
 
       @rect.topleft = @x, @y
+
+      pass_frame if @visible
     end
-    
+
+    def pass_frame
+    end
+
     def image= img_src
+      @img_src = img_src
       @image = Surface[img_src]
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end
+
+    def hide
+      @visible = false
+    end
+
+    def show
+      @visible = true
+    end
+
+    def Sprite.init
+      @@hooks = Hash.new
+      @@update_procs = Hash.new
+    end
+    
+    def Sprite.method_added name
+
+      @@hooks[self] ||= Hash.new
+      @@update_procs[self] ||= Array.new
+
+      parts = name.to_s.split '_'
+
+      if parts.length > 1
+        first_part = "#{parts[0]} #{parts[1]}"
+      else
+        first_part = parts[0]
+      end
+
+      puts "parts: #{parts.inspect}, first_part: #{first_part.inspect}"
+
+      case first_part
+      when "key pressed"
+        @@hooks[self][parts[2].intern] = name
+      when "key released"
+        @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+      when "key down"
+        key = parts[2].intern
+        @@update_procs[self].push proc {
+          if EasyRubygame.keys[key]
+            self.send name
+          end
+        }
+      when "key up"
+        key = parts[2].intern
+        @@update_procs[self].push proc {
+          unless EasyRubygame.keys[key]
+            self.send name
+          end
+        }
+      when "collide"
+        @@update_procs[self].push proc {
+          EasyRubygame.active_scene.sprites.each do |sprite|
+            if self.collide_sprite? sprite
+              self.send name, sprite
+            end
+          end
+        }
+      when "collide with"
+        @@update_procs[self].push proc {
+          klass = Object.const_get parts[2..-1].join('_').intern
+          EasyRubygame.active_scene.sprites.each do |sprite|
+            if sprite.class ==  klass and self.collide_sprite? sprite
+              self.send name, sprite
+            end
+          end
+        }
+      end
+    end
   end
 end
+
+EasyRubygame::Sprite.init

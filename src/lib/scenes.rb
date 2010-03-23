@@ -31,14 +31,14 @@ module EasyRubygame
     end
 
     def draw event_queue
-      event_queue.each do |event|
-        @sprites.call(:handle, event)
-		  end
-
       @sprites.update
 
       @background.blit EasyRubygame.screen, [0,0]
       @sprites.draw EasyRubygame.screen
+    end
+
+    def propagate_event event
+      @sprites.call(:handle, event)
     end
   end
 end

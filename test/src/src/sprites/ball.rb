@@ -20,24 +20,21 @@
 # <http://www.gnu.org/licenses/>.
 
 class Ball < Sprite
-	def initialize start_x, start_y, start_x_vel, start_y_vel, left_paddle, right_paddle
+	def initialize start_x, start_y, start_x_vel, start_y_vel
 		super('ball.png')
-
 		@x = start_x
 		@y = start_y
 		@x_velocity = start_x_vel
 		@y_velocity = start_y_vel
-
-		@left_paddle = left_paddle
-		@right_paddle = right_paddle
 	end
 
-	def update
-    super()
-		if self.collide_sprite?(@left_paddle) or self.collide_sprite?(@right_paddle)
-			@x_velocity = -@x_velocity
-		end
-	end
+  def collide_with_Paddle paddle
+    @x_velocity = -@x_velocity
+  end
+
+  def collide_with_AutoPaddle paddle
+    collide_with_Paddle paddle
+  end
 
   def touch_top
     @y_velocity = -@y_velocity

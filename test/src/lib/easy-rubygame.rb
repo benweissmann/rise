@@ -41,17 +41,33 @@ module EasyRubygame
   def EasyRubygame.run
     @queue = Rubygame::EventQueue.new
     @queue.enable_new_style_events
+    EasyRubygame.keys = Hash.new false
 
     loop do
       @clock.tick
+      @queue.each do |event|
+        case event
+        when QuitEvent
+          return
+        when KeyPressed
+          if event.key == :escape
+            return
+          else
+            EasyRubygame.keys[event.key] = true
+          end
+        when KeyReleased
+          EasyRubygame.keys[event.key] = false
+        end
+
+        EasyRubygame.active_scene.propagate_event event
+      end
       EasyRubygame.active_scene.draw @queue
       EasyRubygame.screen.update
     end
   end
 
   class << self
-    attr_accessor :screen, :clock, :active_scene
-    attr_accessor :window_height, :window_width
+    attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys
   end
 end
 

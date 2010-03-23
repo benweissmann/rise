@@ -19,9 +19,10 @@
 # receive a copy of either of these documents, see
 # <http://www.gnu.org/licenses/>.
 
-paddle_one = Paddle.new(:up, :down, 0, 225)
-paddle_two = Paddle.new(:left, :right, 490, 225)
-ball = Ball.new(250, 250, 2, 2, paddle_one, paddle_two)
+ball = Ball.new(250, 250, 2, 2)
+paddle_one = AutoPaddle.new(ball, 0)
+paddle_two = AutoPaddle.new(ball, 490)
+
 
 main_scene = Scene.new
 main_scene.sprites.push paddle_one, paddle_two, ball

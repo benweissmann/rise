@@ -21,9 +21,6 @@
 
 # paddle class -- represents one of the controllable paddles
 class Paddle < Sprite
-	# allow outside access to the position and size properties
-	attr_accessor :x, :y
-
 	# constructor.
 	# up_key: key that moves this paddle up
 	# down_key: key that moves this paddle down
@@ -31,37 +28,27 @@ class Paddle < Sprite
 	# start_y: starting y coord of the upper-left corner
 	# width: width of the the paddle
 	# height: height of the paddle
-	def initialize up_key, down_key, start_x, start_y
+	def initialize start_x, start_y
 		super('paddle.png')
-
-		# attach the move_up and move_down methods to their keys
-		make_magic_hooks_for(self, {
-			up_key => :move_up,
-			down_key => :move_down,
-			KeyReleased => :key_released
-		})
-
-		# record the up and down keys for use in #stop
-		@up_key = up_key
-		@down_key = down_key
 
 		# starting position
 		@x = start_x
 		@y = start_y
 	end
 
-	def move_up
+	def key_pressed_up
 		@y_velocity = -4
 	end
 
-	def move_down
+	def key_pressed_down
 		@y_velocity = 4
 	end
 
-	def key_released key_event
-		# only stop if the released key was a movement key
-		if [@up_key, @down_key].include? key_event.key
-			@y_velocity = 0
-		end
-	end
+  def key_released_up
+    @y_velocity = 0
+  end
+
+  def key_released_down
+    @y_velocity = 0
+  end
 end
