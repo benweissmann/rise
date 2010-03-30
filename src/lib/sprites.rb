@@ -35,6 +35,7 @@ module EasyRubygame
       @x_velocity = 0
       @y_velocity = 0
       @visible = true
+      @sprites = []
       self.image = img_src
 
       @@update_procs[self.class] ||= []
@@ -44,7 +45,7 @@ module EasyRubygame
     
     def update
       return unless @visible
-
+      @prev_x, @prev_y = @x, @y
       @@update_procs[self.class].each {|p| instance_eval &p}
 
       @x += @x_velocity
@@ -72,7 +73,6 @@ module EasyRubygame
       end
 
       @rect.topleft = @x, @y
-
       pass_frame if @visible
     end
 
@@ -84,6 +84,10 @@ module EasyRubygame
       @image = Surface[img_src]
       @rect = @image.make_rect
       @rect.topleft = @x, @y
+    end
+
+    def add_sprite name, file
+
     end
 
     def hide
@@ -145,7 +149,7 @@ module EasyRubygame
         @@update_procs[self].push proc {
           klass = Object.const_get parts[2..-1].join('_').intern
           EasyRubygame.active_scene.sprites.each do |sprite|
-            if sprite.class ==  klass and self.collide_sprite? sprite
+            if sprite.kind_of? klass and self.collide_sprite? sprite
               self.send name, sprite
             end
           end

@@ -22,12 +22,8 @@
 # paddle class -- represents one of the controllable paddles
 class Paddle < Sprite
 	# constructor.
-	# up_key: key that moves this paddle up
-	# down_key: key that moves this paddle down
 	# start_x: starting x coord of the upper-left corner
 	# start_y: starting y coord of the upper-left corner
-	# width: width of the the paddle
-	# height: height of the paddle
 	def initialize start_x, start_y
 		super('paddle.png')
 
