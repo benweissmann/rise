@@ -53,18 +53,14 @@ module EasyRubygame
 
       begin
         if @x <= 0
-          @x = 0
           self.touch_left
         elsif @x + @rect.width >= EasyRubygame.window_width
-          @x = EasyRubygame.window_width - @rect.width
           self.touch_right
         end
 
         if @y <= 0
-          @y = 0
           self.touch_top
         elsif @y + @rect.height >= EasyRubygame.window_height
-          @y = EasyRubygame.window_height - @rect.height
           self.touch_bottom
         end
       rescue NoMethodError
@@ -96,6 +92,10 @@ module EasyRubygame
 
     def show
       @visible = true
+    end
+
+    def visible?
+      @visible
     end
 
     def Sprite.init

@@ -34,7 +34,9 @@ module EasyRubygame
       @sprites.update
 
       @background.blit EasyRubygame.screen, [0,0]
-      @sprites.draw EasyRubygame.screen
+      @sprites.each do |sprite|
+     	sprite.draw(EasyRubygame.screen) if sprite.visible?
+      end
     end
 
     def propagate_event event
