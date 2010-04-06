@@ -25,7 +25,7 @@ class Paddle < Sprite
 	# start_x: starting x coord of the upper-left corner
 	# start_y: starting y coord of the upper-left corner
 	def initialize start_x, start_y
-		super('paddle.png')
+		super('paddle.gif')
 
 		# starting position
 		@x = start_x

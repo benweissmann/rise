@@ -1,6 +1,6 @@
 class AutoPaddle < Sprite
   def initialize(ball, x)
-    super('paddle.png')
+    super('paddle.gif')
     @ball = ball
     @x = x
     @y = ball.y - 25

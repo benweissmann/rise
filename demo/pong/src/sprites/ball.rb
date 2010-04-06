@@ -21,7 +21,7 @@
 
 class Ball < Sprite
 	def initialize start_x, start_y, start_x_vel, start_y_vel
-		super('ball.png')
+		super('ball.gif')
 		@x = start_x
 		@y = start_y
 		@x_velocity = start_x_vel
