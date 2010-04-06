@@ -37,6 +37,7 @@ $:.unshift(BASE_DIR)
 $:.unshift(SRC_DIR)
 
 # Load Rubygame
+require 'rubygems'
 require 'rubygame'
 include Rubygame
 include Rubygame::Events
