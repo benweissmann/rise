@@ -34,6 +34,8 @@ module EasyRubygame
       @y = 0
       @x_velocity = 0
       @y_velocity = 0
+      @x_acceleration = 0
+      @y_acceleration = 0
       @visible = true
       @sprites = []
       self.image = img_src
@@ -45,11 +47,16 @@ module EasyRubygame
     
     def update
       return unless @visible
+      
       @prev_x, @prev_y = @x, @y
-      @@update_procs[self.class].each {|p| instance_eval &p}
+
+      @x_velocity += @x_acceleration
+      @y_velocity += @y_acceleration
 
       @x += @x_velocity
       @y += @y_velocity
+      
+      @@update_procs[self.class].each {|p| instance_eval &p}
 
       begin
         if @x <= 0
@@ -72,7 +79,12 @@ module EasyRubygame
       pass_frame if @visible
     end
 
-    def pass_frame
+    def onscreen?
+      return !self.offscreen?
+    end
+
+    def offscreen?
+      return (@x > EasyRubygame.window_width) || (@y > EasyRubygame.window_height) || (@x < -@rect.width) || (@y < -@rect.height)
     end
 
     def image= img_src
