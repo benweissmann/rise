@@ -82,6 +82,38 @@ module EasyRubygame
     def pass_frame
     end
 
+    def min(a,b)
+      if a < b
+        return a
+      else
+        return b
+      end
+    end
+    
+    def distance_from_left
+      return @x
+    end
+    
+    def distance_from_right
+      return EasyRubygame.window_width - @x - @rect.width
+    end
+    
+    def distance_from_top
+      return @y
+    end
+    
+    def distance_from_bottom
+      return EasyRubygame.window_width - @x - @rect.width
+    end
+
+    def distance_from_top_bottom
+      return self.min(self.distance_from_top, self.distance_from_bottom)
+    end
+    
+    def distance_from_left_right
+      return self.min(self.distance_from_left, self.distance_from_right)
+    end
+
     def onscreen?
       return !self.offscreen?
     end
