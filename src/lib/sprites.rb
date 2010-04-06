@@ -78,6 +78,9 @@ module EasyRubygame
       @rect.topleft = @x, @y
       pass_frame if @visible
     end
+    
+    def pass_frame
+    end
 
     def onscreen?
       return !self.offscreen?
