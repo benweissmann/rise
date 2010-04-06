@@ -26,7 +26,7 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    attr_accessor :x, :y, :x_velocity, :y_velocity
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :visible
 
     def initialize(img_src)
       super()
@@ -196,7 +196,7 @@ module EasyRubygame
         @@update_procs[self].push proc {
           klass = Object.const_get parts[2..-1].join('_').intern
           EasyRubygame.active_scene.sprites.each do |sprite|
-            if sprite.kind_of? klass and self.collide_sprite? sprite
+            if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible
               self.send name, sprite
             end
           end
