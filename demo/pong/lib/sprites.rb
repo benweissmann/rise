@@ -26,7 +26,7 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    attr_accessor :x, :y, :x_velocity, :y_velocity
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :visible
 
     def initialize(img_src)
       super()
@@ -34,6 +34,8 @@ module EasyRubygame
       @y = 0
       @x_velocity = 0
       @y_velocity = 0
+      @x_acceleration = 0
+      @y_acceleration = 0
       @visible = true
       @sprites = []
       self.image = img_src
@@ -45,11 +47,16 @@ module EasyRubygame
     
     def update
       return unless @visible
+      
       @prev_x, @prev_y = @x, @y
-      @@update_procs[self.class].each {|p| instance_eval &p}
+
+      @x_velocity += @x_acceleration
+      @y_velocity += @y_acceleration
 
       @x += @x_velocity
       @y += @y_velocity
+      
+      @@update_procs[self.class].each {|p| instance_eval &p}
 
       begin
         if @x <= 0
@@ -71,8 +78,40 @@ module EasyRubygame
       @rect.topleft = @x, @y
       pass_frame if @visible
     end
-
+    
     def pass_frame
+    end
+    
+    def distance_from_left
+      return @x
+    end
+    
+    def distance_from_right
+      return EasyRubygame.window_width - @x - @rect.width
+    end
+    
+    def distance_from_top
+      return @y
+    end
+    
+    def distance_from_bottom
+      return EasyRubygame.window_width - @x - @rect.width
+    end
+
+    def distance_from_top_bottom
+      return [self.distance_from_top, self.distance_from_bottom].min
+    end
+    
+    def distance_from_left_right
+      return [self.distance_from_left, self.distance_from_right].min
+    end
+
+    def onscreen?
+      return !self.offscreen?
+    end
+
+    def offscreen?
+      return (@x > EasyRubygame.window_width) || (@y > EasyRubygame.window_height) || (@x < -@rect.width) || (@y < -@rect.height)
     end
 
     def image= img_src
@@ -149,7 +188,7 @@ module EasyRubygame
         @@update_procs[self].push proc {
           klass = Object.const_get parts[2..-1].join('_').intern
           EasyRubygame.active_scene.sprites.each do |sprite|
-            if sprite.kind_of? klass and self.collide_sprite? sprite
+            if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible
               self.send name, sprite
             end
           end

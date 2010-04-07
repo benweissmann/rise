@@ -81,14 +81,6 @@ module EasyRubygame
     
     def pass_frame
     end
-
-    def min(a,b)
-      if a < b
-        return a
-      else
-        return b
-      end
-    end
     
     def distance_from_left
       return @x
@@ -107,11 +99,11 @@ module EasyRubygame
     end
 
     def distance_from_top_bottom
-      return self.min(self.distance_from_top, self.distance_from_bottom)
+      return [self.distance_from_top, self.distance_from_bottom].min
     end
     
     def distance_from_left_right
-      return self.min(self.distance_from_left, self.distance_from_right)
+      return [self.distance_from_left, self.distance_from_right].min
     end
 
     def onscreen?
