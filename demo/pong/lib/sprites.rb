@@ -47,6 +47,7 @@ module EasyRubygame
     
     def update
       return unless @visible
+      @@update_procs[self.class].each {|p| instance_eval &p}
       
       @prev_x, @prev_y = @x, @y
 
@@ -55,8 +56,6 @@ module EasyRubygame
 
       @x += @x_velocity
       @y += @y_velocity
-      
-      @@update_procs[self.class].each {|p| instance_eval &p}
 
       begin
         if @x <= 0
