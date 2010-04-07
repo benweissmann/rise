@@ -19,6 +19,7 @@
 # receive a copy of either of these documents, see
 # <http://www.gnu.org/licenses/>.
 
+
 module EasyRubygame
   # EasyRubygame's base sprite class
   class Sprite
@@ -26,19 +27,18 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    attr_accessor :x, :y, :x_velocity, :y_velocity, :visible
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration, :y_acceleration, :visible
+    attr_reader :sprites, :prev_x, :prev_y
 
+	# Sets up the sprite. Sets positions, velocities, and accelerations to 0.
+	# The specified img_src is loaded and used as the sprite's default image.
     def initialize(img_src)
       super()
-      @x = 0
-      @y = 0
-      @x_velocity = 0
-      @y_velocity = 0
-      @x_acceleration = 0
-      @y_acceleration = 0
+      @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = @x_acceleration = @y_acceleration = 0
       @visible = true
-      @sprites = []
-      self.image = img_src
+      @sprites = Hash.new
+      self.add_sprite :default, img_src
+      self.change_sprite :default
 
       @@update_procs[self.class] ||= []
       @@hooks[self.class] ||= Hash.new
@@ -114,15 +114,12 @@ module EasyRubygame
       return (@x > EasyRubygame.window_width) || (@y > EasyRubygame.window_height) || (@x < -@rect.width) || (@y < -@rect.height)
     end
 
-    def image= img_src
-      @img_src = img_src
-      @image = Surface[img_src]
-      @rect = @image.make_rect
-      @rect.topleft = @x, @y
+    def add_sprite name, file
+	  @sprites[name] = Surface[file]
     end
 
-    def add_sprite name, file
-
+    def change_sprite name
+      self.surface = @sprites[name]
     end
 
     def hide
@@ -136,6 +133,17 @@ module EasyRubygame
     def visible?
       @visible
     end
+
+    
+    private
+
+    def surface= surface
+      @image = surface
+      @rect = @image.make_rect
+      @rect.topleft = @x, @y
+    end
+
+    public
 
     def Sprite.init
       @@hooks = Hash.new
