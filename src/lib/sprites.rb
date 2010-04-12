@@ -21,31 +21,36 @@
 
 
 module EasyRubygame
-  # EasyRubygame's base sprite class
+  # EasyRubygame's base sprite class. All sprites should inherit from
+  # Sprite.
   class Sprite
     # include the Rubygame Sprite module
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration, :y_acceleration, :visible
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration,
+                  :y_acceleration, :visible
+                  
     attr_reader :sprites, :prev_x, :prev_y
 
-	# Sets up the sprite. Sets positions, velocities, and accelerations to 0.
-	# The specified img_src is loaded and used as the sprite's default image.
+	# Sets up the sprite. Sets positions, velocities, and
+	# accelerations to 0. The specified img_src is loaded and used
+	# as the sprite's default image. 
     def initialize(img_src)
       super()
       @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = @x_acceleration = @y_acceleration = 0
       @visible = true
-      @sprites = Hash.new
-      self.add_sprite :default, img_src
-      self.change_sprite :default
+      @images = Hash.new
+      self.add_image :default, img_src
+      self.change_image :default
 
       @@update_procs[self.class] ||= []
       @@hooks[self.class] ||= Hash.new
       self.make_magic_hooks @@hooks[self.class]
     end
-    
-    def update
+
+    # Main update method
+    def update # :nodoc:
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
@@ -70,55 +75,96 @@ module EasyRubygame
           self.touch_bottom
         end
       rescue NoMethodError
-        # ignore NoMethodErrors -- the subclass might not have defined
-        # touch_* methods
+        # ignore NoMethodErrors -- the subclass might not have
+        # defined touch_* methods
       end
 
       @rect.topleft = @x, @y
       pass_frame if @visible
     end
-    
+
+    # Magic Method: Called every frame.
     def pass_frame
     end
-    
+
+    # Returns the integer distance between the left side of this
+    # sprite and the left edge of the window.
     def distance_from_left
       return @x
     end
-    
+
+    # Returns the integer distance between the right side of this
+    # sprite and the right edge of the window.
     def distance_from_right
       return EasyRubygame.window_width - @x - @rect.width
     end
-    
+
+    # Returns the integer distance between the top side of this
+    # sprite and the top edge of the window.
     def distance_from_top
       return @y
     end
-    
+
+    # Returns the integer distance between the bottom side of this
+    # sprite and the bottom edge of the window.
     def distance_from_bottom
       return EasyRubygame.window_width - @x - @rect.width
     end
 
+    # Returns the smaller of:
+	# - The integer distance between the top side of this sprite
+    # and the top edge of the window, or
+    # - The integer distance between the bottom side of this sprite
+    # and the bottom edge of the window.
     def distance_from_top_bottom
       return [self.distance_from_top, self.distance_from_bottom].min
     end
-    
+
+    # Returns the smaller of:
+	# - The integer distance between the left side of this sprite
+    # and the left edge of the window, or
+    # - The integer distance between the right side of this sprite
+    # and the right edge of the window.
     def distance_from_left_right
       return [self.distance_from_left, self.distance_from_right].min
     end
 
+    # Returns true if any part of this sprite is onscreen, false
+    # otherwise.
     def onscreen?
       return !self.offscreen?
     end
 
+    # Returns true if no part of this sprite is onscreen, false
+    # otherwise.
     def offscreen?
-      return (@x > EasyRubygame.window_width) || (@y > EasyRubygame.window_height) || (@x < -@rect.width) || (@y < -@rect.height)
+      return (@x > EasyRubygame.window_width) ||
+             (@y > EasyRubygame.window_height) ||
+             (@x < -@rect.width) ||
+             (@y < -@rect.height)
     end
 
-    def add_sprite name, file
-	  @sprites[name] = Surface[file]
+    def add_sprite name, file # :nodoc:
+      puts "WARNING: Sprite#add_sprite is deprecated; use add_image instead"
+      add_image name, file
     end
 
-    def change_sprite name
-      self.surface = @sprites[name]
+    def change_sprite name # :nodoc:
+      puts "WARNING: Sprite#change_sprite is deprecated; use change_image instead"
+      change_image name
+    end
+    
+    # Adds an image to the list of images this sprite uses.
+    def add_image name, file
+	  @images[name] = Surface[file]
+    end
+
+    def change_image name
+      self.surface = @images[name]
+    end
+
+    def images
+      @images
     end
 
     def hide
@@ -132,7 +178,6 @@ module EasyRubygame
     def visible?
       @visible
     end
-
     
     private
 
@@ -161,8 +206,6 @@ module EasyRubygame
       else
         first_part = parts[0]
       end
-
-      puts "parts: #{parts.inspect}, first_part: #{first_part.inspect}"
 
       case first_part
       when "key pressed"
