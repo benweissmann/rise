@@ -17,7 +17,12 @@ task :demo do
   demo_n = STDIN.gets.to_i
 
   build_demo demos[demo_n]
-  `ruby #{demos[demo_n] + 'runner.rb'}`
+  
+  if (RUBY_PLATFORM =~ /darwin/) == nil
+    `ruby #{demos[demo_n] + 'runner.rb'}`
+  else
+    `rsdl #{demos[demo_n] + 'runner.rb'}`
+  end
 end
 
 def find_demos
