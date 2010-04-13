@@ -30,6 +30,7 @@ class Ball < Sprite
 
   def touch_top
     @y_velocity = -@y_velocity
+    self.wait(100) {@y_velocity = 0}
   end
 
   def touch_bottom
@@ -42,5 +43,6 @@ class Ball < Sprite
 
   def touch_right
     @x_velocity = -@x_velocity
+    self.wait(100) {@x_velocity = 0}
   end
 end

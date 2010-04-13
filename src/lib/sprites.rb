@@ -43,6 +43,8 @@ module EasyRubygame
       @images = Hash.new
       self.add_image :default, img_src
       self.change_image :default
+      
+      @code_to_execute = []
 
       @@update_procs[self.class] ||= []
       @@hooks[self.class] ||= Hash.new
@@ -51,6 +53,7 @@ module EasyRubygame
 
     # Main update method
     def update # :nodoc:
+      self.update_wait()
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
@@ -177,6 +180,24 @@ module EasyRubygame
 
     def visible?
       @visible
+    end
+    
+    def wait(time, &code)
+      @code_to_execute.push([time, code])
+    end
+    
+    def update_wait()
+      @code_to_execute.collect do |time_and_code|
+        time, code = time_and_code
+        if time==0
+          self.instance_eval &code
+          nil
+        else
+          time -= 1
+          [time, code]
+        end
+      end
+      @code_to_execute.compact!
     end
     
     private
