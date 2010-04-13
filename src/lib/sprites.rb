@@ -31,7 +31,7 @@ module EasyRubygame
     attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration,
                   :y_acceleration, :visible
                   
-    attr_reader :sprites, :prev_x, :prev_y
+    attr_reader :sprites, :prev_x, :prev_y, :images
 
 	# Sets up the sprite. Sets positions, velocities, and
 	# accelerations to 0. The specified img_src is loaded and used
@@ -115,7 +115,7 @@ module EasyRubygame
     end
 
     # Returns the smaller of:
-	# - The integer distance between the top side of this sprite
+	  # - The integer distance between the top side of this sprite
     # and the top edge of the window, or
     # - The integer distance between the bottom side of this sprite
     # and the bottom edge of the window.
@@ -124,7 +124,7 @@ module EasyRubygame
     end
 
     # Returns the smaller of:
-	# - The integer distance between the left side of this sprite
+	  # - The integer distance between the left side of this sprite
     # and the left edge of the window, or
     # - The integer distance between the right side of this sprite
     # and the right edge of the window.
@@ -166,10 +166,6 @@ module EasyRubygame
       self.surface = @images[name]
     end
 
-    def images
-      @images
-    end
-
     def hide
       @visible = false
     end
@@ -182,14 +178,16 @@ module EasyRubygame
       @visible
     end
     
-    #A wait method. Calling Sprites#wait(frames, code) will have the sprite
-    #wait the frames, and then execute the code. For example, 
-    #self.wait(10) {@y_velocity = 0}
-    #will set the y_velocity to 0 after 10 frames.
+    # Will have the sprite wait the specified number of
+    # frames, and then execute the given block. For example, 
+    # <tt> self.wait(10) {@y_velocity = 0} </tt>
+    # will set the y_velocity to 0 after 10 frames.
     def wait(frames, &code)
       @code_to_execute.push([frames, code])
     end
     
+    private
+
     #Called every frame to make Sprite#wait work
     def update_wait() #:nodoc:
       @code_to_execute.collect! do |time_and_code|
@@ -204,8 +202,6 @@ module EasyRubygame
       end
       @code_to_execute.compact!
     end
-    
-    private
 
     def surface= surface
       @image = surface
