@@ -43,6 +43,8 @@ module EasyRubygame
       @images = Hash.new
       self.add_image :default, img_src
       self.change_image :default
+      
+      @code_to_execute = []
 
       @@update_procs[self.class] ||= []
       @@hooks[self.class] ||= Hash.new
@@ -51,6 +53,7 @@ module EasyRubygame
 
     # Main update method
     def update # :nodoc:
+      self.update_wait()
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
@@ -177,6 +180,29 @@ module EasyRubygame
 
     def visible?
       @visible
+    end
+    
+    #A wait method. Calling Sprites#wait(frames, code) will have the sprite
+    #wait the frames, and then execute the code. For example, 
+    #self.wait(10) {@y_velocity = 0}
+    #will set the y_velocity to 0 after 10 frames.
+    def wait(frames, &code)
+      @code_to_execute.push([frames, code])
+    end
+    
+    #Called every frame to make Sprite#wait work
+    def update_wait() #:nodoc:
+      @code_to_execute.collect! do |time_and_code|
+        time, code = time_and_code
+        if time==0
+          self.instance_eval &code
+          nil
+        else
+          time -= 1
+          [time, code]
+        end
+      end
+      @code_to_execute.compact!
     end
     
     private

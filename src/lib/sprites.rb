@@ -182,12 +182,17 @@ module EasyRubygame
       @visible
     end
     
-    def wait(time, &code)
-      @code_to_execute.push([time, code])
+    #A wait method. Calling Sprites#wait(frames, code) will have the sprite
+    #wait the frames, and then execute the code. For example, 
+    #self.wait(10) {@y_velocity = 0}
+    #will set the y_velocity to 0 after 10 frames.
+    def wait(frames, &code)
+      @code_to_execute.push([frames, code])
     end
     
-    def update_wait()
-      @code_to_execute.collect do |time_and_code|
+    #Called every frame to make Sprite#wait work
+    def update_wait() #:nodoc:
+      @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
         if time==0
           self.instance_eval &code
