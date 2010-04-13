@@ -42,7 +42,7 @@ module EasyRubygame
       @visible = true
       @images = Hash.new
       self.add_image :default, img_src
-      puts img_src
+      puts "still alive"
       self.change_image :default
       
       @code_to_execute = []
@@ -164,7 +164,6 @@ module EasyRubygame
     end
 
     def change_image name
-      puts name
       @name = name
       self.surface = @images[@name]
     end
@@ -189,8 +188,6 @@ module EasyRubygame
       @code_to_execute.push([frames, code])
     end
     
-    private
-
     #Called every frame to make Sprite#wait work
     def update_wait() #:nodoc:
       @code_to_execute.collect! do |time_and_code|
@@ -205,6 +202,8 @@ module EasyRubygame
       end
       @code_to_execute.compact!
     end
+    
+    private
 
     def surface= surface
       @image = surface

@@ -42,7 +42,6 @@ module EasyRubygame
       @visible = true
       @images = Hash.new
       self.add_image :default, img_src
-      puts "still alive"
       self.change_image :default
       
       @code_to_execute = []
