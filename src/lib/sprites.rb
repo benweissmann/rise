@@ -159,7 +159,7 @@ module EasyRubygame
     
     # Adds an image to the list of images this sprite uses.
     def add_image name, file
-	  @images[name] = Surface[file]
+	    @images[name] = Surface[file]
     end
 
     def change_image name
