@@ -31,7 +31,7 @@ module EasyRubygame
     attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration,
                   :y_acceleration, :visible
                   
-    attr_reader :sprites, :prev_x, :prev_y, :images
+    attr_reader :sprites, :prev_x, :prev_y, :images, :name
 
 	# Sets up the sprite. Sets positions, velocities, and
 	# accelerations to 0. The specified img_src is loaded and used
@@ -42,6 +42,7 @@ module EasyRubygame
       @visible = true
       @images = Hash.new
       self.add_image :default, img_src
+      puts "still alive"
       self.change_image :default
       
       @code_to_execute = []
@@ -163,7 +164,8 @@ module EasyRubygame
     end
 
     def change_image name
-      self.surface = @images[name]
+      @name = name
+      self.surface = @images[@name]
     end
 
     def hide

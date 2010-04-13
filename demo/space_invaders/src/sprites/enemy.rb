@@ -1,13 +1,12 @@
 class Enemy < Sprite
   
-  def initialize(start_x, start_y, image_loc)
-    super(image_loc)
+  def initialize(start_x, start_y, image_a, image_b)
+    super(image_a)
     
-    @curr_image = image_loc
-    @image_a = image_loc
-    @image_b = image_loc
-    
-    @death_image = "enemy_death.gif"
+    self.add_image(:a, image_a)
+    self.add_image(:b, image_b)
+    self.add_image(:death_image, "enemy_death.gif")
+
     @explode_timer_original = 10
     @explode_timer = @explode_timer_original
     @explode_shift = 0
@@ -39,14 +38,13 @@ class Enemy < Sprite
   end
   
   def change_image
-    if @curr_image == @death_image
-      
-    elsif @curr_image == @image_a
-      @curr_image = @image_b
-    else
-      @curr_image = @image_a
+    if self.name != :death_image
+      if self.name == :a
+        self.change_image(:b)
+      elsif self.name == :b
+        self.change_image(:a)
+      end
     end
-    self.image = @curr_image
   end
   
   def shoot
