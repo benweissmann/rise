@@ -11,20 +11,20 @@ class Enemy_Controller < Sprite
   def initialize(delta_x, delta_y, list_of_enemies)
     super("blank.gif")
     
-    @move_every_original = 15
-    @move_every = @move_every_original
+    @move_every = 15
 
-    @buffer = 20
+    @buffer = 40
     @x_jump = delta_x
     @y_jump = delta_y
     @enemies = list_of_enemies 
     
     @just_jumped_y = false
     
+    self.wait(@move_every) {self.move}
+    
   end
   
-  def pass_frame
-    
+  def move
     hitting_side = false
     @enemies.each do |enemy|
       if enemy.distance_from_left_right < @buffer and enemy.visible
@@ -33,27 +33,16 @@ class Enemy_Controller < Sprite
       end
     end
     
-    @enemies.each do |enemy|
-      if enemy.visible && rand(3000) == 1
-        enemy.shoot
-      end
-    end
-    
-    if @move_every <= 0
-      
-      if hitting_side && !@just_jumped_y
-        self.jump_y(@y_jump)
-        @x_jump *= -1
-        @just_jumped_y = true
-      else
-        @just_jumped_y = false
-        self.jump_x(@x_jump)
-      end
-      @move_every = @move_every_original
+    if hitting_side && !@just_jumped_y
+      self.jump_y(@y_jump)
+      @x_jump *= -1
+      @just_jumped_y = true
     else
-      @move_every -= 1
+      @just_jumped_y = false
+      self.jump_x(@x_jump)
     end
     
+    self.wait(@move_every) {self.move}
   end
   
   def jump_x(delta)

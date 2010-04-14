@@ -5,13 +5,10 @@ class Enemy3 < Enemy
     
     @explode_shift = 1
   end
-  
   def collide_with_Player_Bullet(bullet)
-    if(@explode_timer == @explode_timer_original)
-      self.kill
-      bullet.hide
-      @explode_timer -= 1
-    end
+    self.kill
+    bullet.hide
+    self.wait(@explode_timer) {self.hide}
   end
   
 end

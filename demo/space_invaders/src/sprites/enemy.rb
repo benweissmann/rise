@@ -7,37 +7,30 @@ class Enemy < Sprite
     self.add_image(:b, image_b)
     self.add_image(:death_image, "enemy_death.gif")
 
-    @explode_timer_original = 10
-    @explode_timer = @explode_timer_original
+    self.change_image(:a)
+
+    @explode_timer = 10
     @explode_shift = 0
         
     @x = start_x
     @y = start_y
     
-
-  end
-  
-  def pass_frame
-    if @explode_timer_original != @explode_timer
-      if @explode_timer == 0
-        self.hide
-      else
-        @explode_timer -= 1
-      end
-    end
+    @max_bullet_delay = 1500
+    
+    self.wait(rand(@max_bullet_delay)) {self.shoot}
   end
   
   def x=(new_x)
-    self.change_image
+    self.switch_image
     super(new_x)
   end
   
   def y=(new_y)
-    self.change_image
+    self.switch_image
     super(new_y)
   end
   
-  def change_image
+  def switch_image
     if self.name != :death_image
       if self.name == :a
         self.change_image(:b)
@@ -46,18 +39,23 @@ class Enemy < Sprite
       end
     end
   end
-  
+
+  def collide_with_Player_Bullet(bullet)
+    self.kill
+    bullet.hide
+    self.wait(@explode_timer) {self.hide}
+  end
+
   def shoot
-    if(@explode_timer == @explode_timer_original)
+    if(self.name != :death_image)
       EasyRubygame.active_scene.sprites.push(Enemy_Bullet.new(@x+@rect.width/2-2, @y+2))
-    end
+    end 
+    self.wait(rand(@max_bullet_delay)) {self.shoot}
   end
   
   def kill
-    @curr_image = @death_image
-    self.image = @curr_image
+    self.change_image(:death_image)
     @x -= @explode_shift
-    #self.hide
     #will eventually also increase points
   end
 end

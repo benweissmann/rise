@@ -5,11 +5,11 @@ list_of_enemies = []
 main_scene = Black.new
 
 11.times do |x_cord|
-  list_of_enemies.push(Enemy1.new(95+30*x_cord, 40))
-  #list_of_enemies.push(Enemy2.new(92+30*x_cord, 40+30))
-  #list_of_enemies.push(Enemy2.new(92+30*x_cord, 40+60))
-  #list_of_enemies.push(Enemy3.new(92+30*x_cord, 40+90))
-  #list_of_enemies.push(Enemy3.new(92+30*x_cord, 40+120))
+  list_of_enemies.push(Enemy1.new(45+30*x_cord, 30))
+  list_of_enemies.push(Enemy2.new(42+30*x_cord, 30+30))
+  list_of_enemies.push(Enemy2.new(42+30*x_cord, 30+60))
+  list_of_enemies.push(Enemy3.new(42+30*x_cord, 30+90))
+  list_of_enemies.push(Enemy3.new(42+30*x_cord, 30+120))
   
 end
 
