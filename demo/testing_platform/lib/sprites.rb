@@ -31,7 +31,7 @@ module EasyRubygame
     attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration,
                   :y_acceleration, :visible
                   
-    attr_reader :sprites, :prev_x, :prev_y, :images, :name
+    attr_reader :sprites, :prev_x, :prev_y, :images, :name, :time
 
 	# Sets up the sprite. Sets positions, velocities, and
 	# accelerations to 0. The specified img_src is loaded and used
@@ -49,6 +49,8 @@ module EasyRubygame
       @@update_procs[self.class] ||= []
       @@hooks[self.class] ||= Hash.new
       self.make_magic_hooks @@hooks[self.class]
+      
+      @start_time = Time.new.to_i
     end
 
     # Main update method
@@ -177,6 +179,14 @@ module EasyRubygame
 
     def visible?
       @visible
+    end
+    
+    def time
+      return Time.new.to_i - @start_time
+    end
+    
+    def reset_timer
+      @start_time = Time.new.to_i
     end
     
     # Will have the sprite wait the specified number of

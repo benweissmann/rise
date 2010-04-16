@@ -75,6 +75,7 @@ module EasyRubygame
     
     def time
       return Time.new.to_i - @start_time
+    end
   end
 end
 

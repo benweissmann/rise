@@ -21,9 +21,16 @@
 
 class Ball2 < Ball
 
-  
   def key_pressed_a
     self.x = 50
+  end
+  
+  def pass_frame
+    self.wait(100) do
+      self.reset_timer
+    end
+    
+    puts self.time
   end
 
 end
