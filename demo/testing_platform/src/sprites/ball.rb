@@ -45,5 +45,6 @@ class Ball < Sprite
     @x_velocity = -@x_velocity
     self.wait(100) {@x_velocity = 0}
   end
+  
 
 end

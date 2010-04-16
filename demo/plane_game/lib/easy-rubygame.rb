@@ -36,6 +36,9 @@ module EasyRubygame
 
     @clock = Clock.new
 	  @clock.target_framerate = 30
+	  
+	  @start_time = Time.new.to_i
+	  
   end
 
   def EasyRubygame.run
@@ -68,6 +71,10 @@ module EasyRubygame
 
   class << self
     attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys
+    attr_reader :time
+    
+    def time
+      return Time.new.to_i - @start_time
   end
 end
 

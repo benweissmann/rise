@@ -163,7 +163,6 @@ module EasyRubygame
     end
 
     def change_image name
-      puts name
       @name = name
       self.surface = @images[name]
     end
