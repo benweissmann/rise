@@ -22,6 +22,7 @@
 require 'yaml'
 require 'lib/scenes'
 require 'lib/sprites'
+require 'lib/text'
 module EasyRubygame
   def EasyRubygame.init
     Rubygame.init

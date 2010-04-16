@@ -33,16 +33,19 @@ module EasyRubygame
                   
     attr_reader :sprites, :prev_x, :prev_y
 
-	# Sets up the sprite. Sets positions, velocities, and
-	# accelerations to 0. The specified img_src is loaded and used
-	# as the sprite's default image. 
+	  # Sets up the sprite. Sets positions, velocities, and
+	  # accelerations to 0. The specified img_src is loaded and used
+	  # as the sprite's default image. 
     def initialize(img_src)
       super()
       @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = @x_acceleration = @y_acceleration = 0
       @visible = true
       @images = Hash.new
-      self.add_image :default, img_src
-      self.change_image :default
+
+      if img_src
+        self.add_image :default, img_src
+        self.change_image :default
+      end
       
       @code_to_execute = []
 
@@ -159,7 +162,7 @@ module EasyRubygame
     
     # Adds an image to the list of images this sprite uses.
     def add_image name, file
-	  @images[name] = Surface[file]
+	    @images[name] = Surface[file]
     end
 
     def change_image name

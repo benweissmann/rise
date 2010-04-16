@@ -33,16 +33,19 @@ module EasyRubygame
                   
     attr_reader :sprites, :prev_x, :prev_y
 
-	# Sets up the sprite. Sets positions, velocities, and
-	# accelerations to 0. The specified img_src is loaded and used
-	# as the sprite's default image. 
+	  # Sets up the sprite. Sets positions, velocities, and
+	  # accelerations to 0. The specified img_src is loaded and used
+	  # as the sprite's default image. 
     def initialize(img_src)
       super()
       @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = @x_acceleration = @y_acceleration = 0
       @visible = true
       @images = Hash.new
-      self.add_image :default, img_src
-      self.change_image :default
+
+      if img_src
+        self.add_image :default, img_src
+        self.change_image :default
+      end
       
       @code_to_execute = []
 
@@ -159,7 +162,7 @@ module EasyRubygame
     
     # Adds an image to the list of images this sprite uses.
     def add_image name, file
-	  @images[name] = Surface[file]
+	    @images[name] = Surface[file]
     end
 
     def change_image name
@@ -182,15 +185,17 @@ module EasyRubygame
       @visible
     end
     
-    #A wait method. Calling Sprites#wait(frames, code) will have the sprite
-    #wait the frames, and then execute the code. For example, 
-    #self.wait(10) {@y_velocity = 0}
-    #will set the y_velocity to 0 after 10 frames.
+    ##
+    # A wait method. Calling Sprites#wait(frames, code) will have the sprite
+    # wait the frames, and then execute the code. For example, 
+    # self.wait(10) {@y_velocity = 0}
+    # will set the y_velocity to 0 after 10 frames.
     def wait(frames, &code)
       @code_to_execute.push([frames, code])
     end
     
-    #Called every frame to make Sprite#wait work
+    ##
+    # Called every frame to make Sprite#wait work
     def update_wait() #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
@@ -234,6 +239,9 @@ module EasyRubygame
       end
 
       case first_part
+
+      ##
+      # These are docs for key_pressed.
       when "key pressed"
         @@hooks[self][parts[2].intern] = name
       when "key released"
