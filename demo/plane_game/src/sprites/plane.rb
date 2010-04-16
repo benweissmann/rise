@@ -69,26 +69,28 @@ class Plane < Sprite
   end
   
   def collide_with_Missile missile
-    @x_velocity = 0
-    @y_velocity = 0
+    if !@dead
+      @x_velocity = 0
+      @y_velocity = 0
     
-    missile.hide
-    @dead = true
+      missile.hide
+      @dead = true
     
-    self.change_image(:explode1)
+      self.change_image(:explode1)
     
-     self.wait(7) do
-        self.change_image(:explode2)
-        self.wait(7) do
-          self.change_image(:explode3)
+      self.wait(7) do
+          self.change_image(:explode2)
           self.wait(7) do
-            self.hide
-            self.wait(15) do
-              exit
+            self.change_image(:explode3)
+            self.wait(7) do
+              self.hide
+              self.wait(15) do
+                exit
+              end
             end
           end
         end
-      end
+     end 
     
   end
   
