@@ -44,7 +44,6 @@ module EasyRubygame
       self.add_image :default, img_src
       self.change_image :default
       
-      
       @code_to_execute = []
 
       @@update_procs[self.class] ||= []

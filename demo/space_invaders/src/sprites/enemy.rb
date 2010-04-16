@@ -17,7 +17,9 @@ class Enemy < Sprite
     
     @max_bullet_delay = 1500
     
-    self.wait(rand(@max_bullet_delay)) {self.shoot}
+    self.wait(rand(@max_bullet_delay)) do
+      self.shoot
+    end
   end
   
   def x=(new_x)

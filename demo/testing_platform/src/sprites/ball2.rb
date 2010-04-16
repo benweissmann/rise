@@ -19,31 +19,11 @@
 # receive a copy of either of these documents, see
 # <http://www.gnu.org/licenses/>.
 
-class Ball < Sprite
-	def initialize start_x, start_y, start_x_vel, start_y_vel
-		super('ball.gif')
-		@x = start_x
-		@y = start_y
-		@x_velocity = start_x_vel
-		@y_velocity = start_y_vel
-	end
+class Ball2 < Ball
 
-  def touch_top
-    @y_velocity = -@y_velocity
-    self.wait(100) {@y_velocity = 0}
-  end
-
-  def touch_bottom
-    @y_velocity = -@y_velocity
-  end
-
-  def touch_left
-    @x_velocity = -@x_velocity
-  end
-
-  def touch_right
-    @x_velocity = -@x_velocity
-    self.wait(100) {@x_velocity = 0}
+  
+  def key_pressed_a
+    self.x = 50
   end
 
 end

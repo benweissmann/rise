@@ -19,31 +19,28 @@
 # receive a copy of either of these documents, see
 # <http://www.gnu.org/licenses/>.
 
-class Ball < Sprite
-	def initialize start_x, start_y, start_x_vel, start_y_vel
-		super('ball.gif')
-		@x = start_x
-		@y = start_y
-		@x_velocity = start_x_vel
-		@y_velocity = start_y_vel
-	end
 
-  def touch_top
-    @y_velocity = -@y_velocity
-    self.wait(100) {@y_velocity = 0}
+module EasyRubygame
+  class Scene
+    attr_accessor :sprites
+    
+    def initialize
+      @sprites = Sprites::Group.new
+      @background = Surface.new(EasyRubygame.screen.size)
+      @background.fill([250,250,250])
+    end
+
+    def draw event_queue
+      @sprites.update
+
+      @background.blit EasyRubygame.screen, [0,0]
+      @sprites.each do |sprite|
+     	sprite.draw(EasyRubygame.screen) if sprite.visible?
+      end
+    end
+
+    def propagate_event event
+      @sprites.call(:handle, event)
+    end
   end
-
-  def touch_bottom
-    @y_velocity = -@y_velocity
-  end
-
-  def touch_left
-    @x_velocity = -@x_velocity
-  end
-
-  def touch_right
-    @x_velocity = -@x_velocity
-    self.wait(100) {@x_velocity = 0}
-  end
-
 end
