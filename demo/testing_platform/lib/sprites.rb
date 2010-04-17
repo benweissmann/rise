@@ -28,8 +28,31 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    attr_accessor :x, :y, :x_velocity, :y_velocity, :x_acceleration,
-                  :y_acceleration, :visible
+    # The current x position of the top-left corner of this sprite.
+    attr_accessor :x
+
+    # The current y position of the top-left corner of this sprite.
+    attr_accessor :y
+
+    # The x position of this sprite will be adjusted by this amount
+    # each frame. Can be negative.
+    attr_accessor :x_velocity
+
+    # The y position of this sprite will be adjusted by this amount
+    # each frame. Can be negative.
+    attr_accessor :y_velocity
+
+    # The x velocity of this sprite will be adjusted by this amount
+    # each frame. Can be negative.
+    attr_accessor :x_acceleration
+
+    # The y velocity of this sprite will be adjusted by this amount
+    # each frame. Can be negative.
+    attr_accessor :y_acceleration
+
+    # Whether this sprite is visible. Can also be changed and
+    # detected with hide, show, and visible?
+    attr_accessor :visible
                   
     attr_reader :sprites, :prev_x, :prev_y, :images, :name, :time
 
@@ -38,7 +61,8 @@ module EasyRubygame
 	  # as the sprite's default image. 
     def initialize(img_src)
       super()
-      @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = @x_acceleration = @y_acceleration = 0
+      @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = 
+           @x_acceleration = @y_acceleration = 0
       @visible = true
       @images = Hash.new
 
@@ -87,7 +111,9 @@ module EasyRubygame
         # defined touch_* methods
       end
 
-      @rect.topleft = @x, @y
+      if @rect 
+        @rect.topleft = @x, @y
+      end
       pass_frame if @visible
     end
 
@@ -153,37 +179,48 @@ module EasyRubygame
     end
 
     def add_sprite name, file # :nodoc:
-      puts "WARNING: Sprite#add_sprite is deprecated; use add_image instead"
+      puts "WARNING: Sprite#add_sprite is deprecated; 
+            use add_image instead"
       add_image name, file
     end
-
+    
     def change_sprite name # :nodoc:
-      puts "WARNING: Sprite#change_sprite is deprecated; use change_image instead"
+      puts "WARNING: Sprite#change_sprite is deprecated; 
+            use change_image instead"
       change_image name
     end
     
-    # Adds an image to the list of images this sprite uses.
+    # Adds an image to the list of images this sprite uses. "name" is
+    # a symbol that will be used in Sprite#change_image. "file" is
+    # the name of a file in resources/images.
     def add_image name, file
 	    @images[name] = Surface[file]
     end
 
+    # Changes the image this sprite is currently using to the image
+    # associated with the given name (by Sprite#add_image)
     def change_image name
       @name = name
       self.surface = @images[name]
     end
 
+    # Makes this sprite invisible. While a sprite is invisible, none
+    # of its magic methods (including pass_frame) are called, and it
+    # does not activate collisions.
     def hide
       @visible = false
     end
 
+    # Makes an invisible sprite visible again. See Sprite#hide.
     def show
       @visible = true
     end
 
+    # Returns a boolean representing the visibility of this sprite.
     def visible?
       @visible
     end
-    
+
     def time
       return Time.new.to_i - @start_time
     end
@@ -200,7 +237,7 @@ module EasyRubygame
       @code_to_execute.push([frames, code])
     end
     
-    #Called every frame to make Sprite#wait work
+    # Called every frame to make Sprite#wait work
     def update_wait() #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
@@ -217,6 +254,8 @@ module EasyRubygame
     
     private
 
+    # Changes the current Surface (used as the sprite's image) in a
+    # way that makes Rubygame happy.
     def surface= surface
       @image = surface
       @rect = @image.make_rect
@@ -225,60 +264,101 @@ module EasyRubygame
 
     public
 
-    def Sprite.init
-      @@hooks = Hash.new
-      @@update_procs = Hash.new
-    end
-    
-    def Sprite.method_added name
-
-      @@hooks[self] ||= Hash.new
-      @@update_procs[self] ||= Array.new
-
-      parts = name.to_s.split '_'
-
-      if parts.length > 1
-        first_part = "#{parts[0]} #{parts[1]}"
-      else
-        first_part = parts[0]
+    class << self
+      def init #:nodoc:
+        @@hooks = Hash.new
+        @@update_procs = Hash.new
       end
+      
+      def method_added name #:nodoc:
+        @@hooks[self] ||= Hash.new
+        @@update_procs[self] ||= Array.new
 
-      case first_part
-      when "key pressed"
-        @@hooks[self][parts[2].intern] = name
-      when "key released"
-        @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
-      when "key down"
-        key = parts[2].intern
-        @@update_procs[self].push proc {
-          if EasyRubygame.keys[key]
-            self.send name
-          end
-        }
-      when "key up"
-        key = parts[2].intern
-        @@update_procs[self].push proc {
-          unless EasyRubygame.keys[key]
-            self.send name
-          end
-        }
-      when "collide"
-        @@update_procs[self].push proc {
-          EasyRubygame.active_scene.sprites.each do |sprite|
-            if self.collide_sprite? sprite
-              self.send name, sprite
+        parts = name.to_s.split '_'
+
+        if parts.length > 1
+          first_part = "#{parts[0]} #{parts[1]}"
+        else
+          first_part = parts[0]
+        end
+
+        case first_part
+
+        ##
+        # :method: key_pressed_
+        # Magic method: called when a specific key is pressed. For
+        # example, "key_pressed_k" is called when the "k" key is
+        # pressed.
+        when "key pressed"
+          @@hooks[self][parts[2].intern] = name
+          
+        ##
+        # :method: key_released_*
+        # Magic method: called when a specific key is released. For
+        # example, "key_released_k" is called when the "k" key is
+        # released.
+        when "key released"
+          @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+
+
+        ##
+        # :method: key_down_*
+        # Magic method: called when a specific key is down. For
+        # example, "key_down_k" is called when the "k" key is
+        # down.
+        when "key down"
+          key = parts[2].intern
+          @@update_procs[self].push proc {
+            if EasyRubygame.keys[key]
+              self.send name
             end
-          end
-        }
-      when "collide with"
-        @@update_procs[self].push proc {
-          klass = Object.const_get parts[2..-1].join('_').intern
-          EasyRubygame.active_scene.sprites.each do |sprite|
-            if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible
-              self.send name, sprite
+          }
+
+        ##
+        # :method: key_up_*
+        # Magic method: called when a specific key is up. For
+        # example, "key_up_k" is called when the "k" key is
+        # up.        
+        when "key up"
+          key = parts[2].intern
+          @@update_procs[self].push proc {
+            unless EasyRubygame.keys[key]
+              self.send name
             end
-          end
-        }
+          }
+
+        ##
+        # :method: collide
+        # Magic method: called when this sprite touches another
+        # sprite. The method is passed the sprite it collided
+        # with.
+        when "collide"
+          @@update_procs[self].push proc {
+            EasyRubygame.active_scene.sprites.each do |sprite|
+              if self.collide_sprite? sprite
+                self.send name, sprite
+              end
+            end
+          }
+
+        ##
+        # :method: collide_with_*
+        # Magic method: called when this sprite touches a another
+        # sprite of a specific class. For example,
+        # "collide_with_Ball" is called when this sprite collides
+        # with an instance of Ball. The method is passed the sprite
+        # it collided with.
+        when "collide with"
+          @@update_procs[self].push proc {
+            klass = Object.const_get parts[2..-1].join('_').intern
+            EasyRubygame.active_scene.sprites.each do |sprite|
+              if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible
+
+                self.send name, sprite
+              end
+            end
+          }
+        end
       end
     end
   end

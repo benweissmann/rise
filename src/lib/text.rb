@@ -5,12 +5,13 @@ module EasyRubygame
     attr_accessor :font, :size, :color, :bg_color, :text
     
     def initialize config
+      super(nil)
       @old_specs = []
       @font = config[:font] || 'sans.ttf'
       @size = config[:size] || 12
       @text = config[:text] || '' 
       @color = config[:color] || [0, 0, 0]
-      @bg_color = config[:bg_color] || [0, 0, 0]
+      @bg_color = config[:bg_color] || nil
       @x = config[:x] || 0
       @y = config[:y] || 0
     end
@@ -26,7 +27,9 @@ module EasyRubygame
     def update_surface
       file = TextSprite::FONT_DIR + font
       @ttf = TTF.new file, size
-      self.surface = @ttf.render @text, false, @color, @bg_color
+      self.surface = @ttf.render @text, true, @color, @bg_color
     end
   end
 end
+
+TTF.setup
