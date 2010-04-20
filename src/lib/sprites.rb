@@ -315,6 +315,10 @@ module EasyRubygame
     # way that makes Rubygame happy.
     def surface= surface
       @image = surface
+      if surface == nil
+        puts "ERROR. Could not find the image \"#{@name},\" exiting immeditly. Check your spelling."
+        exit
+      end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end
