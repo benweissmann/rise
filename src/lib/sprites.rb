@@ -66,6 +66,7 @@ module EasyRubygame
       @visible = true
       @images = Hash.new
       @animations = Hash.new
+      @animation_queue = Queue.new
       
       if img_src
         self.add_image :default, img_src
@@ -262,7 +263,7 @@ module EasyRubygame
     # in the case of an array of times, it can be 1 element shorter
     # than the images array, as the sprite will remain at the last 
     # image until manually changed again
-    def load_animation(key, images, times)
+    def add_animation(key, images, times)
       @animations[key] = [images, times]
     end
     
