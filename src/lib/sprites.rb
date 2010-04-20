@@ -273,7 +273,7 @@ module EasyRubygame
       if images_and_times != nil
         play_frame(images_and_times[0], images_and_times[1])
       else
-        puts "No animation #{key} found."
+        raise "Error: No animation #{key} found."
       end
     end  
     
@@ -317,8 +317,7 @@ module EasyRubygame
     def surface= surface
       @image = surface
       if surface == nil
-        puts "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
-        exit
+        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
       end
       @rect = @image.make_rect
       @rect.topleft = @x, @y

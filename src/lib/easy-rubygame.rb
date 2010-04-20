@@ -64,8 +64,7 @@ module EasyRubygame
         end
 
         if EasyRubygame.active_scene == nil
-          puts "ERROR. You have not declared a valid active_scene in main.rb. Exiting."
-          exit
+          raise "ERROR. You have not declared a valid active_scene in main.rb. Exiting."
         end
 
         EasyRubygame.active_scene.propagate_event event
