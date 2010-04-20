@@ -65,7 +65,8 @@ module EasyRubygame
            @x_acceleration = @y_acceleration = 0
       @visible = true
       @images = Hash.new
-
+      @animations = Hash.new
+      
       if img_src
         self.add_image :default, img_src
         self.change_image :default
@@ -252,7 +253,63 @@ module EasyRubygame
       @code_to_execute.compact!
     end
     
+    # load an animation into the image.
+    # times can be a single number if everything is evenly spaced,
+    # or an array of how long each image will be up
+    # note that it will NOT return the sprite back to normal at the end
+    # if you want it to, the last item in the images array should
+    # be :default
+    # in the case of an array of times, it can be 1 element shorter
+    # than the images array, as the sprite will remain at the last 
+    # image until manually changed again
+    def load_animation(key, images, times)
+      @animations[key] = [images, times]
+    end
+    
+    # plays the animation immeditly
+    def play_animation(key)
+      images_and_times = @animations[key]
+      if images_and_times != nil
+        play_frame(images_and_times[0], images_and_times[1])
+      else
+        puts "No animation #{key} found."
+      end
+    end  
+    
     private
+    
+    #helper method to play all of the frames in the animation
+    def play_frame(images, times)
+      if images.empty?
+        return
+      end
+      img = images[0]
+      
+      case img
+      when String
+        self.add_image(images[0].to_sym, images[0])
+        self.change_image(images[0].to_sym)
+      else
+        self.change_image(img)
+      end
+      
+      images.shift
+      case times
+      when Numeric
+        self.wait(times) do
+          play_frame(images, times)
+        end
+      else
+        time = times.shift
+        if time == nil
+          time = 1
+        end
+        self.wait(time) do
+          play_frame(images, times)
+        end
+      end
+    end
+        
 
     # Changes the current Surface (used as the sprite's image) in a
     # way that makes Rubygame happy.
@@ -285,7 +342,7 @@ module EasyRubygame
         case first_part
 
         ##
-        # :method: key_pressed_
+        # :method: key_pressed_*
         # Magic method: called when a specific key is pressed. For
         # example, "key_pressed_k" is called when the "k" key is
         # pressed.

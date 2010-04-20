@@ -26,6 +26,11 @@ class Ball < Sprite
 		@y = start_y
 		@x_velocity = start_x_vel
 		@y_velocity = start_y_vel
+		
+		self.load_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif", :default], [10, 20, 10])
+		
+		self.play_animation(:explode)
+		
 	end
 
   def touch_top
