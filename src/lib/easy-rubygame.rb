@@ -63,6 +63,11 @@ module EasyRubygame
           EasyRubygame.keys[event.key] = false
         end
 
+        if EasyRubygame.active_scene == nil
+          puts "ERROR. You have not declared a valid active_scene in main.rb. Exiting."
+          exit
+        end
+
         EasyRubygame.active_scene.propagate_event event
       end
       EasyRubygame.active_scene.draw @queue
