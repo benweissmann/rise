@@ -19,9 +19,9 @@ task :demo do
   build_demo demos[demo_n]
   
   if (RUBY_PLATFORM =~ /darwin/) == nil
-    `ruby #{demos[demo_n] + 'runner.rb'}`
+    system "ruby #{demos[demo_n] + 'runner.rb'}"
   else
-    `rsdl #{demos[demo_n] + 'runner.rb'}`
+    system "rsdl #{demos[demo_n] + 'runner.rb'}"
   end
 end
 
