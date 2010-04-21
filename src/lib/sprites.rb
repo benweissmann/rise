@@ -65,8 +65,10 @@ module EasyRubygame
            @x_acceleration = @y_acceleration = 0
       @visible = true
       @images = Hash.new
+      
       @animations = Hash.new
       @animation_queue = Queue.new
+      @currently_animating = false
       
       if img_src
         self.add_image :default, img_src
@@ -263,17 +265,26 @@ module EasyRubygame
     # in the case of an array of times, it can be 1 element shorter
     # than the images array, as the sprite will remain at the last 
     # image until manually changed again
-    def add_animation(key, images, times)
+    def add_animation(key, images, times, revert_when_done=false)
+      if revert_when_done
+        images.push @name
+      end
       @animations[key] = [images, times]
     end
     
     # plays the animation immeditly
     def play_animation(key)
-      images_and_times = @animations[key]
-      if images_and_times != nil
-        play_frame(images_and_times[0], images_and_times[1])
+      
+      if @currently_animating
+        @animation_queue.push(key)
       else
-        raise "Error: No animation #{key} found."
+        @currently_animating = true
+        images_and_times = @animations[key]
+        if images_and_times != nil
+          play_frame(images_and_times[0], images_and_times[1])
+        else
+          raise "Error: No animation #{key} found."
+        end
       end
     end  
     
@@ -281,9 +292,6 @@ module EasyRubygame
     
     #helper method to play all of the frames in the animation
     def play_frame(images, times)
-      if images.empty?
-        return
-      end
       img = images[0]
       
       case img
@@ -305,8 +313,20 @@ module EasyRubygame
         if time == nil
           time = 1
         end
-        self.wait(time) do
-          play_frame(images, times)
+        
+        if images.empty?
+          @currently_animating = false
+          if @animation_queue.empty?
+            return
+          else
+            self.wait(time) do
+              play_animation(@animation_queue.pop)
+            end
+          end
+        else
+          self.wait(time) do
+            play_frame(images, times)
+          end
         end
       end
     end

@@ -27,9 +27,11 @@ class Ball < Sprite
 		@x_velocity = start_x_vel
 		@y_velocity = start_y_vel
 		
-		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif", :default], [10, 20, 10])
+		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
+		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
 		
 		self.play_animation(:explode)
+		self.play_animation(:unexplode)
 		
 	end
 

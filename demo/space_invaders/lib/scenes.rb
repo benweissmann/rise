@@ -21,6 +21,7 @@
 
 
 module EasyRubygame
+  # Represents a group of scenes.
   class Scene
     attr_accessor :sprites
     

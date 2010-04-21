@@ -22,6 +22,7 @@
 require 'yaml'
 require 'lib/scenes'
 require 'lib/sprites'
+require 'lib/text'
 module EasyRubygame
   def EasyRubygame.init
     Rubygame.init
@@ -60,6 +61,10 @@ module EasyRubygame
           end
         when KeyReleased
           EasyRubygame.keys[event.key] = false
+        end
+
+        if EasyRubygame.active_scene == nil
+          raise "ERROR. You have not declared a valid active_scene in main.rb. Exiting."
         end
 
         EasyRubygame.active_scene.propagate_event event
