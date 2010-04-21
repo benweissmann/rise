@@ -56,7 +56,7 @@ include EasyRubygame
 EasyRubygame.init
 
 # Load scenes and sprites
-(Dir[SRC_DIR + 'scenes/**/*.rb'] + Dir[SRC_DIR + 'sprites/**/*.rb']).each do |script|
+(Dir[SRC_DIR + 'scenes/**/*.rb'] + Dir[SRC_DIR + 'sprites/**/*.rb'] + Dir[SRC_DIR + 'etc/**/*.rb']).each do |script|
   require script
 end
 

@@ -257,14 +257,13 @@ module EasyRubygame
     end
     
     # load an animation into the image.
+    # images in an array of images
     # times can be a single number if everything is evenly spaced,
     # or an array of how long each image will be up
-    # note that it will NOT return the sprite back to normal at the end
-    # if you want it to, the last item in the images array should
-    # be :default
-    # in the case of an array of times, it can be 1 element shorter
-    # than the images array, as the sprite will remain at the last 
-    # image until manually changed again
+    # currently revert_when_done will revert to whatever image you had 
+    # loaded when adding the animation
+    # potentially not the desired behavior, may be changed to current
+    # when playing the animation
     def add_animation(key, images, times, revert_when_done=false)
       if revert_when_done
         images.push @name

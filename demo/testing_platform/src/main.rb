@@ -8,5 +8,5 @@ end
 ball = Ball.new(100, 50, 11, 10)
 
 main_scene = Scene.new
-main_scene.sprites.push ball, txt
+main_scene.sprites.push txt, ball
 EasyRubygame.active_scene = main_scene
