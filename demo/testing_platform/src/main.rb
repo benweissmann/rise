@@ -5,7 +5,10 @@ txt.size = 20
 txt.wait(30) do
   self.size = 200
 end
+
+EasyRubygame.shared_variables[:hello] = "world"
 ball = Ball.new(100, 50, 11, 10)
+
 
 main_scene = Scene.new
 main_scene.sprites.push txt, ball
