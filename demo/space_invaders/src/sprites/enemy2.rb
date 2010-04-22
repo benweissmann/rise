@@ -5,6 +5,9 @@ class Enemy2 < Enemy
     @explode_shift = 1
   end
 
+  #due to a bug with the magic methods and inheritance, 
+  #this needs to be in all the subclasses
+  #it's no different than the one in enemy.rb
   def collide_with_Player_Bullet(bullet)
     self.kill
     bullet.hide
