@@ -92,6 +92,7 @@ module EasyRubygame
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
+      #will prevent it from moving if crippled
       if @can_move
         @prev_x, @prev_y = @x, @y
 
@@ -260,10 +261,12 @@ module EasyRubygame
       @code_to_execute.compact!
     end
     
+    #prevents the sprite from moving
     def cripple
       @can_move = false
     end
     
+    #allows it to move again
     def uncripple
       @can_move = true
     end
