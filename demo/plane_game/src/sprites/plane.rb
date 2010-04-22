@@ -5,9 +5,7 @@ class Plane < Sprite
     self.add_image(:left, "plane_left.gif")
     self.add_image(:right, "plane_right.gif")
     
-    self.add_image(:explode1, "explode1.gif")
-    self.add_image(:explode2, "explode2.gif")
-    self.add_image(:explode3, "explode3.gif")
+    self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [7,7,7])
     
     @y = y
     @x = x
@@ -76,22 +74,14 @@ class Plane < Sprite
       missile.hide
       @dead = true
     
-      self.change_image(:explode1)
-    
-      self.wait(7) do
-          self.change_image(:explode2)
-          self.wait(7) do
-            self.change_image(:explode3)
-            self.wait(7) do
-              self.hide
-              self.wait(15) do
-                exit
-              end
-            end
-          end
+      self.play_animation(:explode)
+      self.wait(21) do
+        self.hide
+        self.wait(15) do
+          exit
         end
-     end 
-    
+      end
+    end
   end
   
 end
