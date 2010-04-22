@@ -82,6 +82,8 @@ module EasyRubygame
       self.make_magic_hooks @@hooks[self.class]
       
       @start_time = Time.new.to_i
+      
+      @can_move = true
     end
 
     # Main update method
@@ -90,13 +92,15 @@ module EasyRubygame
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
-      @prev_x, @prev_y = @x, @y
+      if @can_move
+        @prev_x, @prev_y = @x, @y
 
-      @x_velocity += @x_acceleration
-      @y_velocity += @y_acceleration
-
-      @x += @x_velocity
-      @y += @y_velocity
+        @x_velocity += @x_acceleration
+        @y_velocity += @y_acceleration
+        
+        @x += @x_velocity
+        @y += @y_velocity
+      end
 
       begin
         if @x <= 0
@@ -254,6 +258,14 @@ module EasyRubygame
         end
       end
       @code_to_execute.compact!
+    end
+    
+    def cripple
+      @can_move = false
+    end
+    
+    def uncripple
+      @can_move = true
     end
     
     # load an animation into the image.

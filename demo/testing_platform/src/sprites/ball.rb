@@ -33,6 +33,11 @@ class Ball < Sprite
 		self.play_animation(:explode)
 		self.play_animation(:unexplode)
 		
+		self.cripple
+		self.wait(5) do
+		  self.uncripple
+		end
+		
 	end
 
   def touch_top
