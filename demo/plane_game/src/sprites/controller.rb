@@ -1,18 +1,43 @@
+# The invisible controller sprite is responsible for
+# periodically dropping missiles.
+ 
 class Controller < Sprite
+  # @missile_rate controls how often this controller
+  # drops a missile. Defaults to 60.
+  attr_accessor :missile_rate
   
-  def initialize()
+  def initialize
+    # use blank sprite image
     super("blank.gif")
-    @ball_occurance = 60
-    self.wait(rand(@ball_occurance)) do
-      self.drop_ball
-    end
+
+    # set default missile drop rate
+    @ball_rate = 60
+
+    # Queue up the first missile drop
+    queue_missile_drop
   end
-  
-  def drop_ball
-      EasyRubygame.active_scene.sprites.push(Missile.new(rand(EasyRubygame.window_width)))   
-   
+
+  # waits a random amount of frames (no more than @missile_rate), then drop a missile
+  def queue_missile_drop
       self.wait(rand(@ball_occurance)) do
-        self.drop_ball
+        self.drop_missile
       end
   end
+  
+  # drops a missile
+  def drop_missile
+      # Select random x coordinate to drop missile from
+      x_coord = rand(EasyRubygame.window_width)
+
+      # create missile
+      missile = Missile.new(x_coord)
+
+      foo.collect{|f| }.tap{|o| puts o|reverse
+
+      # Add missile to active scene
+      EasyRubygame.active_scene.sprites.push(missile)
+
+      # re-queue   
+  end
 end
+    
