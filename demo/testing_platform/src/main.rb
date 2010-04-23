@@ -6,7 +6,7 @@ txt.wait(30) do
   self.size = 200
 end
 
-EasyRubygame.shared_variables[:hello] = "world"
+EasyRubygame.storage[:hello] = "world"
 ball = Ball.new(100, 50, 11, 10)
 
 

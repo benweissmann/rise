@@ -33,9 +33,9 @@ class Ball < Sprite
 		self.play_animation(:explode)
 		self.play_animation(:unexplode)
 		
-		self.cripple
+		self.freeze
 		self.wait(5) do
-		  self.uncripple
+		  self.unfreeze
 		end
 		
 	end

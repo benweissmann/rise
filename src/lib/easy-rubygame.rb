@@ -35,7 +35,7 @@ module EasyRubygame
     @screen.show_cursor = true;
     EasyRubygame.screen = screen
     
-    @shared_variables = {}
+    @storage = {}
 
     @clock = Clock.new
 	  @clock.target_framerate = 30
@@ -77,7 +77,7 @@ module EasyRubygame
   end
 
   class << self
-    attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys, :shared_variables
+    attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys, :storage
     attr_reader :time
     
     def time

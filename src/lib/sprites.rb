@@ -262,12 +262,12 @@ module EasyRubygame
     end
     
     #prevents the sprite from moving
-    def cripple
+    def freeze
       @can_move = false
     end
     
     #allows it to move again
-    def uncripple
+    def unfreeze
       @can_move = true
     end
     
