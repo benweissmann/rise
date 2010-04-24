@@ -32,12 +32,30 @@ class Ball < Sprite
 		#self.play_animation(:explode)
 		#self.play_animation(:unexplode)
 		
-		self.y_acceleration = 1
+		self.y_acceleration = 0
 		
 	end
 
-  def pass_frame
+  def collide_with_Floor(floor)
     self.y_velocity = 0
+    puts "hello"
+   # self.y = floor.y
+  end
+
+  def key_pressed_left
+    @x_velocity = -3
+  end
+  
+  def key_released_left
+    @x_velocity = 0
+  end
+  
+  def key_pressed_right
+    @x_velocity = 3
+  end
+  
+  def key_released_right
+    @x_velocity = 0
   end
 
   def touch_top
