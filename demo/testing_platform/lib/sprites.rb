@@ -94,13 +94,13 @@ module EasyRubygame
       
       #will prevent it from moving if crippled
       if @can_move
-        @prev_x, @prev_y = @x, @y
-
-        @x_velocity += @x_acceleration
-        @y_velocity += @y_acceleration
+        @prev_x, @prev_y = @x, @x
         
         @x += @x_velocity
         @y += @y_velocity
+        
+        @x_velocity += @x_acceleration
+        @y_velocity += @y_acceleration
       end
 
       begin

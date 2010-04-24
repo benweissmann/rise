@@ -25,24 +25,23 @@ class Ball < Sprite
 		@x = start_x
 		@y = start_y
 		@x_velocity = start_x_vel
-		@y_velocity = start_y_vel
 		
 		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
 		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
 		
-		self.play_animation(:explode)
-		self.play_animation(:unexplode)
+		#self.play_animation(:explode)
+		#self.play_animation(:unexplode)
 		
-		self.freeze
-		self.wait(5) do
-		  self.unfreeze
-		end
+		self.y_acceleration = 1
 		
 	end
 
+  def pass_frame
+    self.y_velocity = 0
+  end
+
   def touch_top
     @y_velocity = -@y_velocity
-    self.wait(100) {@y_velocity = 0}
   end
 
   def touch_bottom
@@ -55,7 +54,6 @@ class Ball < Sprite
 
   def touch_right
     @x_velocity = -@x_velocity
-    self.wait(100) {@x_velocity = 0}
   end
   
 
