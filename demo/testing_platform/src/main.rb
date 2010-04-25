@@ -9,10 +9,10 @@ end
 EasyRubygame.storage[:hello] = "world"
 ball = Ball.new(100, 50, 0, 0)
 
-EasyRubygame.add_sound(:doh, "doh.wav")
-EasyRubygame.play_sound(:doh, {:repeats => 5})
+ERB_Sounds.add(:doh, "doh.wav")
+ERB_Sounds.play(:doh, {:repeats => 5})
 
-EasyRubygame.fade_sound :doh, 3
+ERB_Sounds.fade :doh, 3
 
 floor = Floor.new(0, 300)
 

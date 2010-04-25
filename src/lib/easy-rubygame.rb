@@ -86,54 +86,6 @@ module EasyRubygame
       return Time.new.to_i - @start_time
     end
     
-    def add_sound name, file_loc
-      sound = Sound.autoload(file_loc)
-      if nil == sound
-        throw "Could not find the sound #{file_loc}."
-      end
-      @sounds[name] = sound
-    end
-    
-    def play_sound name, options={:fade_in => 0, :repeats => 0, :stop_after => nil}
-      @sounds[name].play( options)
-    end
-    
-    def fade_sound name, time
-      @sounds[name].fade_out(time)
-    end
-    
-    def sound_fading? name
-      return @sounds[name].fading?
-    end
-    
-    def pause_sound name
-      @sounds[name].pause
-    end
-    
-    def sound_paused? name
-      return @sounds[name].paused?
-    end
-    
-    def stop_sound name
-      @sounds[name].stop
-    end
-    
-    def sound_stopped? name
-      return @sounds[name].stopped?
-    end
-    
-    def unpause_sound name
-      @sounds[name].unpause
-    end
-    
-    def sound_volume name
-      @sounds[name].volume
-    end
-    
-    def sound_volume=(name, new_vol)
-      @sounds[name].volume = new_vol
-    end
-    
   end
 end
 
