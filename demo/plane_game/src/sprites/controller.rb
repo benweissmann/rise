@@ -11,7 +11,7 @@ class Controller < Sprite
     super("blank.gif")
 
     # set default missile drop rate
-    @ball_rate = 60
+    @missle_rate = 60
 
     # Queue up the first missile drop
     queue_missile_drop
@@ -19,7 +19,7 @@ class Controller < Sprite
 
   # waits a random amount of frames (no more than @missile_rate), then drop a missile
   def queue_missile_drop
-      self.wait(rand(@ball_occurance)) do
+      self.wait(rand(@missle_rate)) do
         self.drop_missile
       end
   end
@@ -32,12 +32,11 @@ class Controller < Sprite
       # create missile
       missile = Missile.new(x_coord)
 
-      foo.collect{|f| }.tap{|o| puts o|reverse
-
       # Add missile to active scene
       EasyRubygame.active_scene.sprites.push(missile)
 
       # re-queue   
+      queue_missile_drop
   end
 end
     

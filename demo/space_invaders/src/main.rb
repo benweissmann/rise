@@ -17,7 +17,7 @@ end
 
 controller = Enemy_Controller.new(8, 20, list_of_enemies)
 
-main_scene.sprites.push(controller, ship)
+main_scene.sprites.push(ship, controller)
 
 #the enemies still need to be pushed on screen at some point
 list_of_enemies.each do |enemy|

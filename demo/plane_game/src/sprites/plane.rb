@@ -29,7 +29,7 @@ class Plane < Sprite
   def key_pressed_left
     # "unless" is the opposite of if.
     # It's the same as saying "if not"
-    unless @dead
+    if !@dead
       # set the image to the left bank
       self.change_image(:left)
       # move left
@@ -38,34 +38,34 @@ class Plane < Sprite
   end
   
   def key_released_left
-    unless @dead
+    if !@dead
       self.change_image(:default)
       @x_velocity = 0
     end
   end
   
   def key_pressed_right
-    unless @dead
+    if !@dead
       self.change_image(:right)    
       @x_velocity = @speed
     end
   end
   
   def key_released_right
-    unless @dead
+    if !@dead
       self.change_image(:default)
       @x_velocity = 0
     end
   end
   
   def key_pressed_up
-    unless @dead
+    if !@dead
       @y_velocity = -@velocity_mag
     end
   end
   
   def key_released_up
-    unless @dead
+    if !@dead
       @y_velocity = 0
     end
   end
@@ -77,14 +77,14 @@ class Plane < Sprite
   end
   
   def key_released_down
-    unless @dead
+    if !@dead
       @y_velocity = 0
     end
   end
 
   # when it's hit with a missile
   def collide_with_Missile missile
-    unless @dead
+    if !@dead
       # stop moving
       @x_velocity = 0
       @y_velocity = 0

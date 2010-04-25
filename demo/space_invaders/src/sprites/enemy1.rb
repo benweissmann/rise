@@ -12,5 +12,4 @@ class Enemy1 < Enemy
     bullet.hide
     self.wait(@explode_timer) {self.hide}
   end
-
 end
