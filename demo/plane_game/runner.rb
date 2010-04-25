@@ -48,6 +48,9 @@ include Rubygame::EventTriggers
 Surface.autoload_dirs = [ RESOURCE_DIR + 'images/' ]
 Sound.autoload_dirs = [ RESOURCE_DIR + 'sounds/']
 
+a = Sound.autoload("doh.wav")
+puts a
+
 # Load EasyRubygame
 require 'lib/easy-rubygame'
 include EasyRubygame
