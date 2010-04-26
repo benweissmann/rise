@@ -3,18 +3,23 @@ include FileUtils::Verbose
 
 task :build_demos do
   find_demos.each do |demo|
-  	build_demo
+  	build_demo demo
   end
 end
 
-task :demo do
+task :demo, :demo_n do |task, args|
   demos = find_demos
-  puts 'Pick a demo by number:'
-  demos.each_with_index do |demo, index|
-  	puts "#{index}) #{demo.split('/')[1]}"
+  
+  if nil == args.demo_n
+    puts 'Pick a demo by number:'
+    demos.each_with_index do |demo, index|
+  	  puts "#{index}) #{demo.split('/')[1]}"
+    end
+    print '> '
+    demo_n = STDIN.gets.to_i
+  else
+    demo_n = args.demo_n.to_i
   end
-  print '> '
-  demo_n = STDIN.gets.to_i
 
   build_demo demos[demo_n]
   

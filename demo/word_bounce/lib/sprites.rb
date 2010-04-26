@@ -82,21 +82,26 @@ module EasyRubygame
       self.make_magic_hooks @@hooks[self.class]
       
       @start_time = Time.new.to_i
+      
+      @can_move = true
     end
-
+    
     # Main update method
     def update # :nodoc:
       self.update_wait()
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
-      @prev_x, @prev_y = @x, @y
-
-      @x_velocity += @x_acceleration
-      @y_velocity += @y_acceleration
-
-      @x += @x_velocity
-      @y += @y_velocity
+      #will prevent it from moving if crippled
+      if @can_move
+        @prev_x, @prev_y = @x, @x
+        
+        @x += @x_velocity
+        @y += @y_velocity
+        
+        @x_velocity += @x_acceleration
+        @y_velocity += @y_acceleration
+      end
 
       begin
         if @x <= 0
@@ -200,6 +205,14 @@ module EasyRubygame
     def add_image name, file
 	    @images[name] = Surface[file]
     end
+    
+    # adds a hash of names to file locations to the images array.
+    # like this: self.add_images {:a => "a.gif", :b => "b.gif"}
+    def add_images names_and_files
+      names_and_files.each do |name, file_loc|
+        self.add_image(name, file_loc)
+      end
+    end
 
     # Changes the image this sprite is currently using to the image
     # associated with the given name (by Sprite#add_image)
@@ -254,6 +267,16 @@ module EasyRubygame
         end
       end
       @code_to_execute.compact!
+    end
+    
+    #prevents the sprite from moving
+    def freeze
+      @can_move = false
+    end
+    
+    #allows it to move again
+    def unfreeze
+      @can_move = true
     end
     
     # load an animation into the image.

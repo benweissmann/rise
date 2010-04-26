@@ -12,7 +12,7 @@ ball = Ball.new(100, 50, 0, 0)
 ERB_Sounds.add(:doh, "doh.wav")
 ERB_Sounds.play(:doh, {:repeats => 5})
 
-ERB_Sounds.fade :doh, 3
+ERB_Sounds.fade_out :doh, 3
 
 floor = Floor.new(0, 300)
 

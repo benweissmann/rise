@@ -85,7 +85,7 @@ module EasyRubygame
       
       @can_move = true
     end
-
+    
     # Main update method
     def update # :nodoc:
       self.update_wait()

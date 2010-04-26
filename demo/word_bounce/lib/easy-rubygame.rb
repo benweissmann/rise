@@ -34,11 +34,15 @@ module EasyRubygame
     @screen.title = properties['title']
     @screen.show_cursor = true;
     EasyRubygame.screen = screen
+    
+    @storage = {}
 
     @clock = Clock.new
 	  @clock.target_framerate = 30
 	  
 	  @start_time = Time.new.to_i
+	  
+	  @sounds = {}
 	  
   end
 
@@ -75,12 +79,13 @@ module EasyRubygame
   end
 
   class << self
-    attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys
+    attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys, :storage
     attr_reader :time
     
     def time
       return Time.new.to_i - @start_time
     end
+    
   end
 end
 

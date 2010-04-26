@@ -42,6 +42,8 @@ module EasyRubygame
 	  
 	  @start_time = Time.new.to_i
 	  
+	  @sounds = {}
+	  
   end
 
   def EasyRubygame.run
@@ -83,6 +85,7 @@ module EasyRubygame
     def time
       return Time.new.to_i - @start_time
     end
+    
   end
 end
 
