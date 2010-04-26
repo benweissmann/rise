@@ -205,6 +205,14 @@ module EasyRubygame
     def add_image name, file
 	    @images[name] = Surface[file]
     end
+    
+    # adds a hash of names to file locations to the images array.
+    # like this: self.add_images {:a => "a.gif", :b => "b.gif"}
+    def add_images names_and_files
+      names_and_files.each do |name, file_loc|
+        self.add_image(name, file_loc)
+      end
+    end
 
     # Changes the image this sprite is currently using to the image
     # associated with the given name (by Sprite#add_image)
