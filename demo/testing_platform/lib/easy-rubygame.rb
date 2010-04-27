@@ -82,6 +82,7 @@ module EasyRubygame
     attr_accessor :screen, :clock, :active_scene, :window_height, :window_width, :keys, :storage
     attr_reader :time
     
+    # get the time since the game has started
     def time
       return Time.new.to_i - @start_time
     end
