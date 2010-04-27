@@ -86,6 +86,12 @@ module EasyRubygame
       return Time.new.to_i - @start_time
     end
     
+    # gets the color related to sym. can be any
+    # css valid color.
+    def color sym
+      return Color::CSS[sym]
+    end
+    
   end
 end
 
