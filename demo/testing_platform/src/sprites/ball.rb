@@ -24,8 +24,8 @@ class Ball < Sprite
 		super('ball.gif')
 		@x = start_x
 		@y = start_y
-		@x_velocity = start_x_vel
-		@y_velocity = start_y_vel
+		#@x_velocity = start_x_vel
+		@y_velocity = 0
 		
 		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
 		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
@@ -33,15 +33,17 @@ class Ball < Sprite
 		#self.play_animation(:explode)
 		#self.play_animation(:unexplode)
 		
-		self.y_acceleration = 0
+		self.y_acceleration = 1
 		
+	end
+	
+	def pass_frame
+	  #puts "#{self.col_rect}"
 	end
 
   def collide_with_Floor(floor)
     self.y_velocity = 0
-    puts "hello"
-    #raise "hi"
-   # self.y = floor.y
+    self.y = floor.y-self.rect.height
   end
 
   def key_pressed_left
@@ -59,13 +61,17 @@ class Ball < Sprite
   def key_released_right
     @x_velocity = 0
   end
+  
+  def key_pressed_up
+    @y_velocity = -10
+  end
 
   def touch_top
     @y_velocity = -@y_velocity
   end
 
   def touch_bottom
-    @y_velocity = -@y_velocity
+    @y_velocity = 0
   end
 
   def touch_left

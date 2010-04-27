@@ -84,6 +84,7 @@ module EasyRubygame
       @start_time = Time.new.to_i
       
       @can_move = true
+      
     end
     
     # Main update method
@@ -121,9 +122,13 @@ module EasyRubygame
       end
 
       if @rect 
-        @rect.topleft = @x, @y
+        self.update_rect
       end
       pass_frame if @visible
+    end
+
+    def update_rect
+      @rect.topleft = @x, @y
     end
 
     # Magic Method: Called every frame.
@@ -451,12 +456,12 @@ module EasyRubygame
         # "collide_with_Ball" is called when this sprite collides
         # with an instance of Ball. The method is passed the sprite
         # it collided with.
-        when "collide with"
+        when "collide with" 
           @@update_procs[self].push proc {
             klass = Object.const_get parts[2..-1].join('_').intern
             EasyRubygame.active_scene.sprites.each do |sprite|
+              sprite.update_rect
               if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible
-
                 self.send name, sprite
               end
             end
