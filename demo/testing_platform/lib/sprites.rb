@@ -382,6 +382,8 @@ module EasyRubygame
         @@hooks[self] ||= Hash.new
         @@update_procs[self] ||= Array.new
 
+        puts name
+
         parts = name.to_s.split '_'
 
         if parts.length > 1
