@@ -25,18 +25,25 @@ module EasyRubygame
   class Scene
     attr_accessor :sprites
     
-    def initialize
+    def initialize(user_options={})
+      
+      default_options = {:color => [255, 255, 255], :image => nil, :mode => nil}
+      
+      @options = default_options.merge(user_options)
+      
       @sprites = Sprites::Group.new
       @background = Surface.new(EasyRubygame.screen.size)
-      @background.fill([250,250,250])
+      @background.fill(@options[:color])
     end
 
     def draw event_queue
       @sprites.update
+      
+      p Surface["ball.gif"]
 
-      @background.blit EasyRubygame.screen, [0,0]
+      @background.blit EasyRubygame.screen, [0,0], nil
       @sprites.each do |sprite|
-     	sprite.draw(EasyRubygame.screen) if sprite.visible?
+     	  sprite.draw(EasyRubygame.screen) if sprite.visible?
       end
     end
 
