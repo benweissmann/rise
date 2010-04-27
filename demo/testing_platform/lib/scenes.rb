@@ -38,9 +38,7 @@ module EasyRubygame
 
     def draw event_queue
       @sprites.update
-      
-      p Surface["ball.gif"]
-
+    
       @background.blit EasyRubygame.screen, [0,0], nil
       @sprites.each do |sprite|
      	  sprite.draw(EasyRubygame.screen) if sprite.visible?

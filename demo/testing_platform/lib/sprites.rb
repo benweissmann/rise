@@ -186,6 +186,18 @@ module EasyRubygame
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
+
+    def add_sprite name, file # :nodoc:
+      puts "WARNING: Sprite#add_sprite is deprecated; 
+            use add_image instead"
+      add_image name, file
+    end
+    
+    def change_sprite name # :nodoc:
+      puts "WARNING: Sprite#change_sprite is deprecated; 
+            use change_image instead"
+      change_image name
+    end
     
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
