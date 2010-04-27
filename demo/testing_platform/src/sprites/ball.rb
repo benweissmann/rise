@@ -40,6 +40,7 @@ class Ball < Sprite
   def collide_with_Floor(floor)
     self.y_velocity = 0
     puts "hello"
+    #raise "hi"
    # self.y = floor.y
   end
 

@@ -25,11 +25,16 @@ module EasyRubygame
   class Scene
     attr_accessor :sprites
     
-    def initialize(background = nil)
-      self.background = (background || [255, 255, 255])
+    # takes a single, optional, parmeter: background
+    # background is either an array of color values,
+    # a symbol for a color, or an image to be tiled.
+    def initialize(background = :white)
+      self.background = background
       @sprites = Sprites::Group.new
     end
 
+    # change the background to bg
+    # bg can be anything that the parmeter in initialize can be
     def background= bg
       @background = Surface.new(EasyRubygame.screen.size)
 
@@ -37,7 +42,7 @@ module EasyRubygame
       when Array # color array
         @background.fill bg
       when Symbol
-        @background.fill Color::CSS[bg]
+        @background.fill EasyRubygame.color bg
       when String
         image = Surface[bg]
         0.step EasyRubygame.window_width, image.w do |x|
@@ -48,6 +53,7 @@ module EasyRubygame
       end  
     end
     
+    # draws each of the sprites to the scene
     def draw event_queue
       @sprites.update
     

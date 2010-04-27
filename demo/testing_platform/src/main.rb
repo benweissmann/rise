@@ -8,6 +8,16 @@ end
 
 EasyRubygame.storage[:hello] = "world"
 ball = Ball.new(100, 50, 3, 3)
-main_scene = Scene.new :aqua
-main_scene.sprites.push ball
+floor = Floor.new(0, 250)
+main_scene = Scene.new :green
+second_scene = Scene.new
+second_scene.sprites.push ball, floor
+
+EasyRubygame.storage[:ss] = second_scene
+
+ball.wait 30 do 
+  EasyRubygame.active_scene = EasyRubygame.storage[:ss]
+end
+
+main_scene.sprites.push ball, floor
 EasyRubygame.active_scene = main_scene
