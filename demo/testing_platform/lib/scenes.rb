@@ -25,17 +25,29 @@ module EasyRubygame
   class Scene
     attr_accessor :sprites
     
-    def initialize(user_options={})
-      
-      default_options = {:color => [255, 255, 255], :image => nil, :mode => nil}
-      
-      @options = default_options.merge(user_options)
-      
+    def initialize(background = nil)
+      self.background = (background || [255, 255, 255])
       @sprites = Sprites::Group.new
-      @background = Surface.new(EasyRubygame.screen.size)
-      @background.fill(@options[:color])
     end
 
+    def background= bg
+      @background = Surface.new(EasyRubygame.screen.size)
+
+      case bg
+      when Array # color array
+        @background.fill bg
+      when Symbol
+        @background.fill Color::CSS[bg]
+      when String
+        image = Surface[bg]
+        0.step EasyRubygame.window_width, image.w do |x|
+          0.step EasyRubygame.window_height, image.h do |y|
+            image.blit @background, [x, y]
+          end
+        end
+      end  
+    end
+    
     def draw event_queue
       @sprites.update
     
