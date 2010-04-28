@@ -1,25 +1,28 @@
-EasyRubygame
+= EasyRubygame
+
 http://benweissmann.github.com/EasyRubygame
+
 Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
+
 Licensed under the LGPL; see below for details
 
-### Contact ###
+== Contact
 
 Any questions, comments, or ideas can be directed to Ben Weissmann,
 <benweissmann@gmail.com>
 
-### Use ###
+== Use
 
 src/ contains the default directory structure for EasyRubygame projects,
 including the framework itself. Copy this directory for each project,
 and modify the contents of the "src" folder. Then, run "runner.rb"
 
-### Demo ###
+== Demo
 
 Run "test.sh" to run the demo, a game of pong. Use the arrow keys to control
 the paddles.
 
-### Developing ###
+== Developing
 
 src/lib/ contains the main part of the framework.
 
@@ -28,14 +31,27 @@ src/ into test/, then runs the test application. Note that becuase the
 framework includes a default src/main.rb, the test application stores
 its main.rb in test/new_main.rb. Make any changes there.
 
-### Contributing ###
+== Contributing
 
 Grab the latest using git. Instructions at
 http://github.com/benweissmann/EasyRubygame. Submit paches to the contact
 address listed above, or fork the repository and submit a pull request. Thanks
 for contributing!
 
-### License ###
+== Credits
+
+=== Developers
+- Ben Weissmann
+- Mason Glidden
+
+=== Projects
+- Rubygame (http://rubygame.org/)
+- Ruby (http://www.ruby-lang.org/en/)
+- SDL (http://www.libsdl.org/)
+- Ruby/SDL (http://www.kmc.gr.jp/~ohai/rubysdl.en.html)
+- RDoc (http://ruby-doc.org/core/)
+
+== License
 
 EasyRubygame is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as

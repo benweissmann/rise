@@ -31,7 +31,8 @@ task :demo, :demo_n do |task, args|
 end
 
 task :docs do
-  system 'rdoc src/lib'
+  rm_r 'doc'
+  system 'rdoc src/lib README.TXT --main=README.TXT'
 end
 
 def find_demos

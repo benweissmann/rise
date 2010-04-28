@@ -28,13 +28,13 @@ module EasyRubygame
       
       # Plays a sound.
       #
-      # +options+:: Hash of options
-      # +options[:fade_in]+:: If specified, the sound will face in over this
+      # <code>options</code>:: Hash of options
+      # <code>options[:fade_in]</code>:: If specified, the sound will face in over this
       #                       many seconds.
-      # +options[:repeats]+:: Repeat this song this many times. Note that a
+      # <code>options[:repeats]</code>:: Repeat this song this many times. Note that a
       #                       value of 1 will play the sound twice, a value
       #                       of 2 will play it thrice, etc.
-      # +options[:stop_after]+:: If specified, the sound will stop playing
+      # <code>options[:stop_after]</code>:: If specified, the sound will stop playing
       #                          after this many seconds.
       def play name, options={:fade_in => 0, :repeats => 0, :stop_after => nil}
         @sounds[name].play( options)
