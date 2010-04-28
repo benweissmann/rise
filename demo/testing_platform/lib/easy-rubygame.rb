@@ -23,6 +23,8 @@ require 'yaml'
 require 'lib/scenes'
 require 'lib/sprites'
 require 'lib/text'
+
+# Global EasyRubygame module. Escapsuates core functions and utilities.
 module EasyRubygame
   def EasyRubygame.init
     Rubygame.init
@@ -67,8 +69,8 @@ module EasyRubygame
           EasyRubygame.keys[event.key] = false
         end
 
-        if EasyRubygame.active_scene == nil
-          raise "ERROR. You have not declared a valid active_scene in main.rb. Exiting."
+        if EasyRubygame.active_scene.nil?
+          raise "EasyRubygame.active_scene has not been set in main.rb."
         end
 
         EasyRubygame.active_scene.propagate_event event
@@ -89,8 +91,29 @@ module EasyRubygame
     
     # gets the color related to sym. can be any
     # css valid color.
-    def color sym
-      return Color::CSS[sym]
+    def to_color obj
+      color = Color[:black]
+      # color object
+      if obj.kind_of? Color::ColorBase
+        color = obj
+      # hsv hash
+      elsif obj.kind_of? Hash and obj[:h] and obj[:s] and obj[:v]
+        color = Color::ColorHSV.new [obj[:h], obj[:s], obj[:v]]
+      # hsl hash
+      elsif obj.kind_of? Hash and obj[:h] and obj[:s] and obj[:l]
+        color = Color::ColorHSL.new [obj[:h], obj[:s], obj[:l]]
+      # rgb hash 
+      elsif obj.kind_of?(Hash) and obj[:r] and obj[:g] and obj[:b]
+        color = Color::ColorRGB.new [obj[:r], obj[:g], obj[:b]]
+      # rgb array / enumerable
+      elsif obj.kind_of? Enumerable and obj.length == 3
+        return obj.to_a
+      # can we make it a string? if so, look it up in the global color palette
+      elsif obj.respond_to? :to_s
+        color = Color[obj.to_s.intern]
+      end
+
+      return color.to_rgba_ary[0..2].collect{|n| n*255}
     end
     
   end
