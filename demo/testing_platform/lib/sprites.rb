@@ -359,6 +359,16 @@ module EasyRubygame
       end
     end  
     
+    # stops the current animation, changes the image to the optional parmeter
+    # and clears the quenue of animations
+    def stop_all_animations return_to=nil
+      @currently_playing = false
+      @animation_queue = []
+      if return_to 
+        self.change_image return_to
+      end
+    end
+    
     private
     
     #helper method to play all of the frames in the animation
