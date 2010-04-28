@@ -9,7 +9,7 @@ Licensed under the LGPL; see below for details
 == Contact
 
 Any questions, comments, or ideas can be directed to Ben Weissmann,
-<benweissmann@gmail.com>
+benweissmann@gmail.com
 
 == Use
 
