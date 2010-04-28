@@ -10,10 +10,23 @@ module EasyRubygame
       @font = config[:font] || 'sans.ttf'
       @size = config[:size] || 12
       @text = config[:text] || '' 
-      @color = config[:color] || [0, 0, 0]
-      @bg_color = config[:bg_color] || nil
+      
+      @color = if config[:color]
+        EasyRubygame.to_color(config[:color])
+      else
+        Color[:black]
+      end
+      
+      @bg_color = if config[:bg_color]
+        EasyRubygame.to_color(config[:bg_color])
+      else
+        nil
+      end
+      
       @x = config[:x] || 0
       @y = config[:y] || 0
+
+      update_surface
     end
 
     def update
@@ -27,6 +40,8 @@ module EasyRubygame
     def update_surface
       file = TextSprite::FONT_DIR + font
       @ttf = TTF.new file, size
+      @color = EasyRubygame.to_color @color
+      @bg_color = EasyRubygame.to_color @bg_color unless @bg_color.nil?
       self.surface = @ttf.render @text, true, @color, @bg_color
     end
   end

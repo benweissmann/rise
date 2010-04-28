@@ -121,7 +121,7 @@ module EasyRubygame
         # defined touch_* methods
       end
 
-      if @rect 
+      unless @rect.nil?
         self.update_rect
       end
       pass_frame if @visible
