@@ -38,19 +38,16 @@ module EasyRubygame
     def background= bg
       @background = Surface.new(EasyRubygame.screen.size)
 
-      case bg
-      when Array # color array
-        @background.fill bg
-      when Symbol
-        @background.fill EasyRubygame.color bg
-      when String
+      if bg.kind_of? String
         image = Surface[bg]
         0.step EasyRubygame.window_width, image.w do |x|
           0.step EasyRubygame.window_height, image.h do |y|
             image.blit @background, [x, y]
           end
         end
-      end  
+      else
+        @background.fill EasyRubygame.to_color(bg)
+      end
     end
     
     # draws each of the sprites to the scene

@@ -23,6 +23,30 @@
 module EasyRubygame
   # EasyRubygame's base sprite class. All sprites should inherit from
   # Sprite.
+  #
+  # Classes that inherit from sprite can define "magic methods". These
+  # methods are called automatically based on their name.
+  #
+  # +pass_frame+::     Called every frame
+  # +key_pressed_*+::  Called when a specific key is pressed. For
+  #                    example, "key_pressed_k" is called when the
+  #                    "k" key is pressed.
+  # +key_released_*+:: Called when a specific key is released. For
+  #                    example, "key_released_k" is called when the
+  #                    "k" key is released.
+  # +key_down_*+::     Called when a specific key is down. For
+  #                    example, "key_down_k" is called when the "k"
+  #                    key is down.
+  # +key_up_*+::       Called when a specific key is up. For example,
+  #                    "key_up_k" is called when the "k" key is up.        
+  # +collide+::        Called when this sprite touches another
+  #                    sprite. The method is passed the sprite it
+  #                    collided with.
+  # +collide_with_*+:: Called when this sprite touches another sprite
+  #                    of a specific class. For example,
+  #                    "collide_with_Ball" is called when this sprite
+  #                    collides with an instance of Ball. The method
+  #                    is passed the sprite it collided with.
   class Sprite
     # include the Rubygame Sprite module
     include Sprites::Sprite
@@ -53,8 +77,18 @@ module EasyRubygame
     # Whether this sprite is visible. Can also be changed and
     # detected with hide, show, and visible?
     attr_accessor :visible
-                  
-    attr_reader :sprites, :prev_x, :prev_y, :images, :name, :time
+
+    # The x coordinate of this sprite in the previous frame              
+    attr_reader :prev_x
+
+    # The y coordinate of this sprite in the previous frame   
+    attr_reader :prev_y
+
+    # Hash of image names to their corresponding Surface
+    attr_reader :images
+
+    # Name of the current image
+    attr_reader :name
 
 	  # Sets up the sprite. Sets positions, velocities, and
 	  # accelerations to 0. The specified img_src is loaded and used
@@ -89,7 +123,8 @@ module EasyRubygame
     
     # Main update method
     def update # :nodoc:
-      self.update_wait()
+      update_wait
+      
       return unless @visible
       @@update_procs[self.class].each {|p| instance_eval &p}
       
@@ -127,12 +162,12 @@ module EasyRubygame
       pass_frame if @visible
     end
 
-    def update_rect
+    # Updates @rect to reflect current @x and @y.
+    def update_rect #:nodoc:
       @rect.topleft = @x, @y
     end
 
-    # Magic Method: Called every frame.
-    def pass_frame
+    def pass_frame #:nodoc:
     end
 
     # Returns the integer distance between the left side of this
@@ -191,18 +226,6 @@ module EasyRubygame
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
-
-    def add_sprite name, file # :nodoc:
-      puts "WARNING: Sprite#add_sprite is deprecated; 
-            use add_image instead"
-      add_image name, file
-    end
-    
-    def change_sprite name # :nodoc:
-      puts "WARNING: Sprite#change_sprite is deprecated; 
-            use change_image instead"
-      change_image name
-    end
     
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
@@ -243,10 +266,12 @@ module EasyRubygame
       @visible
     end
 
-    def time
+    # Returns the time (in seconds) since this sprite was created.
+    def time_elapsed
       return Time.new.to_i - @start_time
     end
-    
+
+    # Resets the timer used by Sprite#time_elapsed
     def reset_timer
       @start_time = Time.new.to_i
     end
@@ -255,15 +280,17 @@ module EasyRubygame
     # frames, and then execute the given block. For example, 
     # <tt> self.wait(10) {@y_velocity = 0} </tt>
     # will set the y_velocity to 0 after 10 frames.
-    def wait(frames, &code)
-      @code_to_execute.push([frames, code])
+    def wait frames, &code
+      @code_to_execute.push [frames, code]
     end
+
+    private
     
     # Called every frame to make Sprite#wait work
-    def update_wait() #:nodoc:
+    def update_wait #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
-        if time==0
+        if time == 0
           self.instance_eval &code
           nil
         else
@@ -273,44 +300,61 @@ module EasyRubygame
       end
       @code_to_execute.compact!
     end
+
+    public
     
-    #prevents the sprite from moving
-    def freeze
+    # Stops this sprite from moving due to its velocity or
+    # acceleration. It can stil be move by changing @x and @y.
+    # See Sprite#go
+    def stop
       @can_move = false
     end
     
-    #allows it to move again
-    def unfreeze
+    # Allows this sprite to move after it has been stopped by
+    # Sprite#stop
+    def go 
       @can_move = true
     end
     
-    # load an animation into the image.
-    # images in an array of images
-    # times can be a single number if everything is evenly spaced,
-    # or an array of how long each image will be up
-    # currently revert_when_done will revert to whatever image you had 
-    # loaded when adding the animation
-    # potentially not the desired behavior, may be changed to current
-    # when playing the animation
-    def add_animation(key, images, times, revert_when_done=false)
+    # Adds an animation to this sprite.
+    #
+    # +name+:: The name that will refer to this animation when it is
+    #          played by Sprite#play_animation.
+    # +images+:: The images that make up this animation, in the order
+    #            they should be played.
+    # +times+:: Either a single integer that represents the number
+    #           of frames each image in the images parameter should
+    #           be played, or an array of integers that correspond
+    #           to the time each image should be played, e.g. the
+    #           first item in +times+ is the number of frames the
+    #           first item in +images+ is shown, and so on for the
+    #           second item, third item, etc.
+    # +revert_when_done+:: Optional. If this is set to true, the
+    #                      sprite will revert to the image it was
+    #                      using when the animation was added. This
+    #                      behavior may change in the future.
+    def add_animation(name, images, times, revert_when_done=false)
       if revert_when_done
         images.push @name
       end
-      @animations[key] = [images, times]
+      @animations[name] = [images, times]
     end
     
-    # plays the animation immeditly
-    def play_animation(key)
+    # Queues the animation. If no animation is currently playing,
+    # the animation referenced by +name+ will be played immediately.
+    # If an animation is currently playing, the animation will
+    # be queued and played when current animations complete.
+    def play_animation(name)
       
       if @currently_animating
-        @animation_queue.push(key)
+        @animation_queue.push(name)
       else
         @currently_animating = true
-        images_and_times = @animations[key]
+        images_and_times = @animations[name]
         if images_and_times != nil
           play_frame(images_and_times[0], images_and_times[1])
         else
-          raise "Error: No animation #{key} found."
+          raise IndexError, "No animation #{name} found."
         end
       end
     end  
@@ -392,28 +436,15 @@ module EasyRubygame
 
         case first_part
 
-        ##
-        # :method: key_pressed_*
-        # Magic method: called when a specific key is pressed. For
-        # example, "key_pressed_k" is called when the "k" key is
-        # pressed.
+        # key_pressed_*
         when "key pressed"
           @@hooks[self][parts[2].intern] = name
           
-        ##
-        # :method: key_released_*
-        # Magic method: called when a specific key is released. For
-        # example, "key_released_k" is called when the "k" key is
-        # released.
+        # key_released_*
         when "key released"
           @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
 
-
-        ##
-        # :method: key_down_*
-        # Magic method: called when a specific key is down. For
-        # example, "key_down_k" is called when the "k" key is
-        # down.
+        # key_down_*
         when "key down"
           key = parts[2].intern
           @@update_procs[self].push proc {
@@ -422,11 +453,7 @@ module EasyRubygame
             end
           }
 
-        ##
-        # :method: key_up_*
-        # Magic method: called when a specific key is up. For
-        # example, "key_up_k" is called when the "k" key is
-        # up.        
+        # key_up_*      
         when "key up"
           key = parts[2].intern
           @@update_procs[self].push proc {
@@ -435,11 +462,7 @@ module EasyRubygame
             end
           }
 
-        ##
-        # :method: collide
-        # Magic method: called when this sprite touches another
-        # sprite. The method is passed the sprite it collided
-        # with.
+        # collide
         when "collide"
           @@update_procs[self].push proc {
             EasyRubygame.active_scene.sprites.each do |sprite|
@@ -448,14 +471,8 @@ module EasyRubygame
               end
             end
           }
-
-        ##
-        # :method: collide_with_*
-        # Magic method: called when this sprite touches a another
-        # sprite of a specific class. For example,
-        # "collide_with_Ball" is called when this sprite collides
-        # with an instance of Ball. The method is passed the sprite
-        # it collided with.
+          
+        # collide_with_*
         when "collide with" 
           @@update_procs[self].push proc {
             klass = Object.const_get parts[2..-1].join('_').intern
