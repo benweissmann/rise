@@ -21,20 +21,27 @@
 
 
 module EasyRubygame
-  # Represents a group of scenes.
+  # Represents a group of sprites.
   class Scene
+    # An array of sprites that belong to this scene.
     attr_accessor :sprites
     
-    # takes a single, optional, parmeter: background
-    # background is either an array of color values,
-    # a symbol for a color, or an image to be tiled.
+    # +background+ is an optional parameter that controls the
+    # background of this scene.
+    # - If it's a string, a file with that name will be loaded from
+    #   resources/images and tiled to fill the background.
+    # - If it represents a color (as an [r, g, b] array, the name
+    #   of a color as a symbol, or any other format supported by
+    #   EasyRubygame.to_color), that color will be used as the
+    #   background.
+    # - If it is omitted, it defaults to a white background.
     def initialize(background = :white)
       self.background = background
       @sprites = Sprites::Group.new
     end
 
-    # change the background to bg
-    # bg can be anything that the parmeter in initialize can be
+    # Changes the background of this scene. See Scene.new for details
+    # on how to specify a background.
     def background= bg
       @background = Surface.new(EasyRubygame.screen.size)
 
@@ -50,8 +57,8 @@ module EasyRubygame
       end
     end
     
-    # draws each of the sprites to the scene
-    def draw event_queue
+    # Draws each of the sprites to the scene.
+    def draw event_queue #:nodoc:
       @sprites.update
     
       @background.blit EasyRubygame.screen, [0,0], nil
@@ -60,7 +67,8 @@ module EasyRubygame
       end
     end
 
-    def propagate_event event
+    # Passes an event on to all sprites in this scene.
+    def propagate_event event #:nodoc
       @sprites.call(:handle, event)
     end
   end
