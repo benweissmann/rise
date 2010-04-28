@@ -191,18 +191,6 @@ module EasyRubygame
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
-
-    def add_sprite name, file # :nodoc:
-      puts "WARNING: Sprite#add_sprite is deprecated; 
-            use add_image instead"
-      add_image name, file
-    end
-    
-    def change_sprite name # :nodoc:
-      puts "WARNING: Sprite#change_sprite is deprecated; 
-            use change_image instead"
-      change_image name
-    end
     
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
@@ -315,6 +303,16 @@ module EasyRubygame
       end
     end  
     
+    # stops the current animation, changes the image to the optional parmeter
+    # and clears the quenue of animations
+    def stop_all_animations return_to=nil
+      @currently_playing = false
+      @animation_queue = []
+      if return_to 
+        self.change_image return_to
+      end
+    end
+    
     private
     
     #helper method to play all of the frames in the animation
@@ -381,8 +379,6 @@ module EasyRubygame
       def method_added name #:nodoc:
         @@hooks[self] ||= Hash.new
         @@update_procs[self] ||= Array.new
-
-        puts name
 
         parts = name.to_s.split '_'
 
