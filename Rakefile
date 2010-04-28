@@ -30,6 +30,10 @@ task :demo, :demo_n do |task, args|
   end
 end
 
+task :docs do
+  system 'rdoc src/lib'
+end
+
 def find_demos
   Dir['demo/*/runner.rb'].collect{|f| f.rpartition('/')[0..1].join}
 end
