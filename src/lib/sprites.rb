@@ -262,6 +262,11 @@ module EasyRubygame
       @code_to_execute.push [frames, code]
     end
 
+    # removes all current wait statements.
+    def remove_waits
+      @code_to_execute = []
+    end
+
     private
     
     # Called every frame to make Sprite#wait work
