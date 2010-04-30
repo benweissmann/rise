@@ -49,6 +49,8 @@ class Ball < Sprite
 		
 		puts self.image_width
 		
+		self.add_wait_until lambda {self.x >= 100}, lambda {puts "foo"}
+		
 	end
 
   def collide_with_Floor floor

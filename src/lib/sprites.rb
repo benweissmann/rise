@@ -91,6 +91,7 @@ module EasyRubygame
       end
       
       @code_to_execute = []
+      @wait_untils = []
 
       @@update_procs[self.class] ||= Hash.new
       @@hooks[self.class] ||= Hash.new
@@ -107,6 +108,7 @@ module EasyRubygame
     # Main update method
     def update # :nodoc:
       update_wait
+      check_and_execute_wait_untils
 
       #will prevent it from moving if crippled
       if @can_move and !@visible and @move_when_hidden
@@ -301,6 +303,34 @@ module EasyRubygame
     def reset_timer
       @start_time = Time.new.to_i
     end
+    
+    # will check every frame to see if pred is true. if so, sprite 
+    # will execute function. For example,
+    # <tt> self.add_wait_until lambda {@x > 100}, lambda {puts "hi there!"} </tt>
+    # will puts "hi there!" after x gets past 100. 
+    # Lambda is a method that turns code into an object that can be
+    # easily passed to methods. pred should return a boolean
+    def add_wait_until pred, function
+      @wait_untils.push [pred, function]
+    end
+    
+    #:nodoc:
+    def check_and_execute_wait_untils
+      @wait_untils.collect! do |pred_fn_pair|
+        pred = pred_fn_pair[0]
+        fn = pred_fn_pair[1]
+        
+        if pred.call
+          fn.call
+          nil
+        else
+          pred_fn_pair
+        end
+      end
+      
+      @wait_untils.compact!
+    end
+    
     
     # Will have the sprite wait the specified number of
     # frames, and then execute the given block. For example, 

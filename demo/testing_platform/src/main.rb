@@ -1,5 +1,6 @@
 # This should hold main initialization logic
 
+
 txt = EasyRubygame::TextSprite.new :text => 'foo', :size => 200, :color => ({:r => 0.3, :g => 0.7, :b => 0.5})
 txt.size = 20
 txt.wait(30) do
@@ -7,7 +8,7 @@ txt.wait(30) do
 end
 
 EasyRubygame.storage[:hello] = "world"
-ball = Ball.new
+ball = Ball.new 20, 50, 1, 1
 floor = Floor.new(0, 250)
 main_scene = Scene.new :green
 second_scene = Scene.new :blue
