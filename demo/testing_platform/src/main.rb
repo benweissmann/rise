@@ -7,10 +7,11 @@ txt.wait(30) do
 end
 
 EasyRubygame.storage[:hello] = "world"
-ball = Ball.new(100, 50, 3, 3)
+ball = Ball.new
 floor = Floor.new(0, 250)
 main_scene = Scene.new :green
 second_scene = Scene.new :blue
+test = Test2.new
 second_scene.sprites.push ball, floor, txt
 
 EasyRubygame.storage[:ss] = second_scene
@@ -19,5 +20,5 @@ ball.wait 30 do
   EasyRubygame.active_scene = EasyRubygame.storage[:ss]
 end
 
-main_scene.sprites.push ball, floor
+main_scene.sprites.push ball, floor, test
 EasyRubygame.active_scene = main_scene

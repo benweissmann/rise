@@ -561,13 +561,13 @@ module EasyRubygame
 
       def update_procs #:nodoc:
         procs = @@update_procs[self] 
-        procs = superclass.update_procs.merge(procs) unless superclass == Sprite
+        procs = (superclass.update_procs || {}).merge(procs) unless superclass == Sprite
         return procs
       end
 
       def hooks #:nodoc:
         hooks = @@hooks[self]
-        hooks = superclass.hooks.merge(hooks) unless superclass == Sprite
+        hooks = (superclass.hooks || {}).merge(hooks) unless superclass == Sprite
         return hooks
       end
     end
