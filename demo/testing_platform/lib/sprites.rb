@@ -459,15 +459,22 @@ module EasyRubygame
         # key_down_*
         when "key down"
           if parts[2]
-            key = parts[2].intern
+             @@update_procs[self][parts[2].intern] = proc {
+                if EasyRubygame.keys[key]
+                  self.send name
+                end
+              }
           else
-            raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
+            @@update_procs[self][name] = proc {
+                if EasyRubygame.keys
+                  keys_down = EasyRubygame.keys.reject {|key, value| !value}.keys
+                  if keys_down.length > 0
+                    self.send name, keys_down
+                  end
+                end
+              }
           end
-          @@update_procs[self][name] = proc {
-            if EasyRubygame.keys[key]
-              self.send name
-            end
-          }
+         
 
         # key_up_*      
         when "key up"
