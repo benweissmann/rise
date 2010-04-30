@@ -405,7 +405,7 @@ module EasyRubygame
     def surface= surface
       @image = surface
       if surface == nil
-        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
+        raise "ERROR. Could not find the image \"#{@images[@name]},\" exiting immediately. Check your spelling."
       end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
