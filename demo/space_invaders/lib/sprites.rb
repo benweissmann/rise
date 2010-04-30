@@ -1,25 +1,3 @@
-# Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
-#
-# This file is part of EasyRubygame.
-#
-# EasyRubygame is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# EasyRubygame is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
-# in addition, your should have received a copy of the GNU General
-# Public License, in a file called COPYING. If you did not
-# receive a copy of either of these documents, see
-# <http://www.gnu.org/licenses/>.
-
-
 module EasyRubygame
   # EasyRubygame's base sprite class. All sprites should inherit from
   # Sprite.
@@ -111,9 +89,9 @@ module EasyRubygame
       
       @code_to_execute = []
 
-      @@update_procs[self.class] ||= []
+      @@update_procs[self.class] ||= Hash.new
       @@hooks[self.class] ||= Hash.new
-      self.make_magic_hooks @@hooks[self.class]
+      self.make_magic_hooks self.class.hooks
       
       @start_time = Time.new.to_i
       
@@ -126,7 +104,7 @@ module EasyRubygame
       update_wait
       
       return unless @visible
-      @@update_procs[self.class].each {|p| instance_eval &p}
+      self.class.update_procs.each {|name, proc| instance_eval &proc}
       
       #will prevent it from moving if crippled
       if @can_move
@@ -359,6 +337,16 @@ module EasyRubygame
       end
     end  
     
+    # stops the current animation, changes the image to the optional parmeter
+    # and clears the quenue of animations
+    def stop_all_animations return_to=nil
+      @currently_playing = false
+      @animation_queue = []
+      if return_to 
+        self.change_image return_to
+      end
+    end
+    
     private
     
     #helper method to play all of the frames in the animation
@@ -424,7 +412,7 @@ module EasyRubygame
       
       def method_added name #:nodoc:
         @@hooks[self] ||= Hash.new
-        @@update_procs[self] ||= Array.new
+        @@update_procs[self] ||= Hash.new
 
         parts = name.to_s.split '_'
 
@@ -447,7 +435,7 @@ module EasyRubygame
         # key_down_*
         when "key down"
           key = parts[2].intern
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             if EasyRubygame.keys[key]
               self.send name
             end
@@ -456,7 +444,7 @@ module EasyRubygame
         # key_up_*      
         when "key up"
           key = parts[2].intern
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             unless EasyRubygame.keys[key]
               self.send name
             end
@@ -464,7 +452,7 @@ module EasyRubygame
 
         # collide
         when "collide"
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             EasyRubygame.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite
                 self.send name, sprite
@@ -474,7 +462,7 @@ module EasyRubygame
           
         # collide_with_*
         when "collide with" 
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             klass = Object.const_get parts[2..-1].join('_').intern
             EasyRubygame.active_scene.sprites.each do |sprite|
               sprite.update_rect
@@ -484,6 +472,18 @@ module EasyRubygame
             end
           }
         end
+      end
+
+      def update_procs #:nodoc:
+        procs = @@update_procs[self] 
+        procs = superclass.update_procs.merge(procs) unless superclass == Sprite
+        return procs
+      end
+
+      def hooks #:nodoc:
+        hooks = @@hooks[self]
+        hooks = superclass.hooks.merge(hooks) unless superclass == Sprite
+        return hooks
       end
     end
   end

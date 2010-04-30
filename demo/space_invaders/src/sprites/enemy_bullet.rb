@@ -1,3 +1,5 @@
+require 'sprites/bullet'
+
 class Enemy_Bullet < Bullet
   
   #separated from player_bullet in case I wanted to
