@@ -89,9 +89,9 @@ module EasyRubygame
       
       @code_to_execute = []
 
-      @@update_procs[self.class] ||= []
+      @@update_procs[self.class] ||= Hash.new
       @@hooks[self.class] ||= Hash.new
-      self.make_magic_hooks @@hooks[self.class]
+      self.make_magic_hooks self.class.hooks
       
       @start_time = Time.new.to_i
       
@@ -104,7 +104,7 @@ module EasyRubygame
       update_wait
       
       return unless @visible
-      @@update_procs[self.class].each {|p| instance_eval &p}
+      self.class.update_procs.each {|name, proc| instance_eval &proc}
       
       #will prevent it from moving if crippled
       if @can_move
@@ -428,7 +428,7 @@ module EasyRubygame
       
       def method_added name #:nodoc:
         @@hooks[self] ||= Hash.new
-        @@update_procs[self] ||= Array.new
+        @@update_procs[self] ||= Hash.new
 
         parts = name.to_s.split '_'
 
@@ -458,12 +458,17 @@ module EasyRubygame
 
         # key_down_*
         when "key down"
+<<<<<<< HEAD
           if parts[2]
             key = parts[2].intern
           else
             raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
           end
           @@update_procs[self].push proc {
+=======
+          key = parts[2].intern
+          @@update_procs[self][name] = proc {
+>>>>>>> e27f37a9d1f90c2516da6413bde77ab39036b537
             if EasyRubygame.keys[key]
               self.send name
             end
@@ -471,12 +476,17 @@ module EasyRubygame
 
         # key_up_*      
         when "key up"
+<<<<<<< HEAD
           if parts[2]
             key = parts[2].intern
           else
             raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
           end
           @@update_procs[self].push proc {
+=======
+          key = parts[2].intern
+          @@update_procs[self][name] = proc {
+>>>>>>> e27f37a9d1f90c2516da6413bde77ab39036b537
             unless EasyRubygame.keys[key]
               self.send name
             end
@@ -484,7 +494,7 @@ module EasyRubygame
 
         # collide
         when "collide"
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             EasyRubygame.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite
                 self.send name, sprite
@@ -494,7 +504,7 @@ module EasyRubygame
           
         # collide_with_*
         when "collide with" 
-          @@update_procs[self].push proc {
+          @@update_procs[self][name] = proc {
             klass = Object.const_get parts[2..-1].join('_').intern
             EasyRubygame.active_scene.sprites.each do |sprite|
               sprite.update_rect
@@ -504,6 +514,18 @@ module EasyRubygame
             end
           }
         end
+      end
+
+      def update_procs #:nodoc:
+        procs = @@update_procs[self] 
+        procs = superclass.update_procs.merge(procs) unless superclass == Sprite
+        return procs
+      end
+
+      def hooks #:nodoc:
+        hooks = @@hooks[self]
+        hooks = superclass.hooks.merge(hooks) unless superclass == Sprite
+        return hooks
       end
     end
   end
