@@ -79,7 +79,7 @@ module EasyRubygame
       @images = Hash.new
       
       @animations = Hash.new
-      @animation_queue = Queue.new
+      @animation_queue = []
       @currently_animating = false
       
       if img_src
@@ -209,7 +209,12 @@ module EasyRubygame
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
     def add_image name, file
-	    @images[name] = Surface[file]
+	    surface = Surface[file]
+	    if surface
+	      @images[name] = surface
+	    else
+        raise "ERROR. Could not find the image \"#{file}.\" Exiting immediately. Make sure that \"#{file}\" is in resources/sprites."
+      end
     end
     
     # adds a hash of names to file locations to the images array.
@@ -224,7 +229,12 @@ module EasyRubygame
     # associated with the given name (by Sprite#add_image)
     def change_image name
       @name = name
-      self.surface = @images[name]
+      surface = @images[name]
+      if surface
+        self.surface = @images[name]
+      else
+        raise "ERROR. No image added with the name \"#{name}\""
+      end
     end
 
     # Makes this sprite invisible. While a sprite is invisible, none
@@ -260,6 +270,11 @@ module EasyRubygame
     # will set the y_velocity to 0 after 10 frames.
     def wait frames, &code
       @code_to_execute.push [frames, code]
+    end
+
+    # removes all current wait statements.
+    def remove_waits
+      @code_to_execute = []
     end
 
     private
@@ -328,7 +343,9 @@ module EasyRubygame
         @animation_queue.push(name)
       else
         @currently_animating = true
-        images_and_times = @animations[name]
+        # Marsh.load(Marshal.dump(foo)) creates a deep clone of foo.
+        # needed to fix bug when running animation multiple times
+        images_and_times = Marshal.load(Marshal.dump(@animations[name]))
         if images_and_times != nil
           play_frame(images_and_times[0], images_and_times[1])
         else
@@ -352,11 +369,10 @@ module EasyRubygame
     #helper method to play all of the frames in the animation
     def play_frame(images, times)
       img = images[0]
-      
       case img
       when String
-        self.add_image(images[0].to_sym, images[0])
-        self.change_image(images[0].to_sym)
+        self.add_image(img.to_sym, img)
+        self.change_image(img.to_sym)
       else
         self.change_image(img)
       end
@@ -365,9 +381,11 @@ module EasyRubygame
       case times
       when Numeric
         self.wait(times) do
-          play_frame(images, times)
+          if @currently_playing
+            play_frame(images, times)
+          end
         end
-      else
+      when Array
         time = times.shift
         if time == nil
           time = 1
@@ -379,6 +397,7 @@ module EasyRubygame
             return
           else
             self.wait(time) do
+              
               play_animation(@animation_queue.pop)
             end
           end
@@ -395,9 +414,6 @@ module EasyRubygame
     # way that makes Rubygame happy.
     def surface= surface
       @image = surface
-      if surface == nil
-        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
-      end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end
@@ -430,7 +446,11 @@ module EasyRubygame
           
         # key_released_*
         when "key released"
-          @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          if parts[2]
+            @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          else
+            raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+          end
 
         # key_down_*
         when "key down"

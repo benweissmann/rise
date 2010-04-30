@@ -1,25 +1,3 @@
-# Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
-#
-# This file is part of EasyRubygame.
-#
-# EasyRubygame is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# EasyRubygame is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
-# in addition, your should have received a copy of the GNU General
-# Public License, in a file called COPYING. If you did not
-# receive a copy of either of these documents, see
-# <http://www.gnu.org/licenses/>.
-
-
 module EasyRubygame
   # EasyRubygame's base sprite class. All sprites should inherit from
   # Sprite.
@@ -101,7 +79,7 @@ module EasyRubygame
       @images = Hash.new
       
       @animations = Hash.new
-      @animation_queue = Queue.new
+      @animation_queue = []
       @currently_animating = false
       
       if img_src
@@ -284,6 +262,11 @@ module EasyRubygame
       @code_to_execute.push [frames, code]
     end
 
+    # removes all current wait statements.
+    def remove_waits
+      @code_to_execute = []
+    end
+
     private
     
     # Called every frame to make Sprite#wait work
@@ -350,7 +333,9 @@ module EasyRubygame
         @animation_queue.push(name)
       else
         @currently_animating = true
-        images_and_times = @animations[name]
+        # Marsh.load(Marshal.dump(foo)) creates a deep clone of foo.
+        # needed to fix bug when running animation multiple times
+        images_and_times = Marshal.load(Marshal.dump(@animations[name]))
         if images_and_times != nil
           play_frame(images_and_times[0], images_and_times[1])
         else
@@ -374,11 +359,10 @@ module EasyRubygame
     #helper method to play all of the frames in the animation
     def play_frame(images, times)
       img = images[0]
-      
       case img
       when String
-        self.add_image(images[0].to_sym, images[0])
-        self.change_image(images[0].to_sym)
+        self.add_image(img.to_sym, img)
+        self.change_image(img.to_sym)
       else
         self.change_image(img)
       end
@@ -387,9 +371,11 @@ module EasyRubygame
       case times
       when Numeric
         self.wait(times) do
-          play_frame(images, times)
+          if @currently_playing
+            play_frame(images, times)
+          end
         end
-      else
+      when Array
         time = times.shift
         if time == nil
           time = 1
@@ -401,6 +387,7 @@ module EasyRubygame
             return
           else
             self.wait(time) do
+              
               play_animation(@animation_queue.pop)
             end
           end
@@ -418,7 +405,7 @@ module EasyRubygame
     def surface= surface
       @image = surface
       if surface == nil
-        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
+        raise "ERROR. Could not find the image \"#{@images[@name]},\" exiting immediately. Check your spelling."
       end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
