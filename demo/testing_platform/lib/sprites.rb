@@ -52,6 +52,9 @@ module EasyRubygame
     # each frame. Can be negative.
     attr_accessor :y_acceleration
 
+    # Updates the position / velocity when hidden.
+    attr_accessor :move_when_hidden
+
     # Whether this sprite is visible. Can also be changed and
     # detected with hide, show, and visible?
     attr_accessor :visible
@@ -104,8 +107,6 @@ module EasyRubygame
     # Main update method
     def update # :nodoc:
       update_wait
-      
-      puts "updating, visible = #{self.visible}, can_move = #{@can_move}, move_when_hidden = #{@move_when_hidden}"
 
       #will prevent it from moving if crippled
       if @can_move and (@visible || @move_when_hidden)
@@ -116,10 +117,6 @@ module EasyRubygame
         
         @x_velocity += @x_acceleration
         @y_velocity += @y_acceleration
-        
-        
-          puts "updating move #{@prev_x}, #{@x}, #{@x_velocity}, #{@x_acceleration}"
-        
       end
       
       return unless @visible
