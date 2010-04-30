@@ -209,7 +209,12 @@ module EasyRubygame
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
     def add_image name, file
-	    @images[name] = Surface[file]
+	    surface = Surface[file]
+	    if surface
+	      @images[name] = surface
+	    else
+        raise "ERROR. Could not find the image \"#{file}.\" Exiting immediately. Make sure that \"#{file}\" is in resources/sprites."
+      end
     end
     
     # adds a hash of names to file locations to the images array.
@@ -224,7 +229,12 @@ module EasyRubygame
     # associated with the given name (by Sprite#add_image)
     def change_image name
       @name = name
-      self.surface = @images[name]
+      surface = @images[name]
+      if surface
+        self.surface = @images[name]
+      else
+        raise "ERROR. No image added with the name \"#{name}\""
+      end
     end
 
     # Makes this sprite invisible. While a sprite is invisible, none
@@ -404,9 +414,6 @@ module EasyRubygame
     # way that makes Rubygame happy.
     def surface= surface
       @image = surface
-      if surface == nil
-        raise "ERROR. Could not find the image \"#{@images[@name]},\" exiting immediately. Check your spelling."
-      end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end
@@ -435,15 +442,27 @@ module EasyRubygame
 
         # key_pressed_*
         when "key pressed"
-          @@hooks[self][parts[2].intern] = name
+          if parts[2]
+            @@hooks[self][parts[2].intern] = name
+          else
+            #raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+          end
           
         # key_released_*
         when "key released"
-          @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          if parts[2]
+            @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          else
+            raise "Missing the key in the name of some key_released method (ie you have key_pressed, not key_pressed_left)."
+          end
 
         # key_down_*
         when "key down"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             if EasyRubygame.keys[key]
               self.send name
@@ -452,7 +471,11 @@ module EasyRubygame
 
         # key_up_*      
         when "key up"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             unless EasyRubygame.keys[key]
               self.send name

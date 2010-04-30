@@ -2,8 +2,31 @@ module EasyRubygame
   class TextSprite < Sprite
     FONT_DIR = RESOURCE_DIR + 'fonts/'
 
-    attr_accessor :font, :size, :color, :bg_color, :text
-    
+    # The font file in resources/fonts/ that the text will be
+    # rendered with.
+    attr_accessor :font
+
+    # The size, in points, of the text.
+    attr_accessor :size
+
+    # The color of the text. This can be an [r, g, b] color array,
+    # the name of a color as a symbol, or any other format supported
+    # by EasyRubygame.to_color.
+    attr_accessor :color
+
+    # The background color drawn behind the text. This can be an
+    # [r, g, b] color array,  the name of a color as a symbol, or
+    # any other format supported by EasyRubygame.to_color.
+    #
+    # If +bg_color+ is nil, the text will be drawn with a transparent
+    # background.
+    attr_accessor :bg_color
+
+    # The text that will be rendered.
+    attr_accessor :text
+
+    # +config+ is hash that can contain values for any of TextSprites
+    # attributes.
     def initialize config
       super(nil)
       @old_specs = []
@@ -29,7 +52,7 @@ module EasyRubygame
       update_surface
     end
 
-    def update
+    def update #:nodoc:
       super()
       unless @old_specs == [@font, @size, @color, @bg_color, @text]
         update_surface
@@ -37,7 +60,8 @@ module EasyRubygame
       end
     end
 
-    def update_surface
+    # Renders text onto @surface
+    def update_surface #:nodoc:
       file = TextSprite::FONT_DIR + font
       @ttf = TTF.new file, size
       @color = EasyRubygame.to_color @color
@@ -46,5 +70,3 @@ module EasyRubygame
     end
   end
 end
-
-TTF.setup

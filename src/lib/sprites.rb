@@ -445,7 +445,7 @@ module EasyRubygame
           if parts[2]
             @@hooks[self][parts[2].intern] = name
           else
-            raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+            #raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
           end
           
         # key_released_*
@@ -458,7 +458,11 @@ module EasyRubygame
 
         # key_down_*
         when "key down"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             if EasyRubygame.keys[key]
               self.send name
@@ -467,7 +471,11 @@ module EasyRubygame
 
         # key_up_*      
         when "key up"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             unless EasyRubygame.keys[key]
               self.send name

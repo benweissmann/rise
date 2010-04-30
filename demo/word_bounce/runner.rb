@@ -55,13 +55,6 @@ include EasyRubygame
 # Run Rubygame initialization
 EasyRubygame.init
 
-# load sounds
-require 'lib/sounds.rb'
-include ERB_Sounds
-
-# init the sound structure
-ERB_Sounds.init
-
 # Load scenes and sprites
 (Dir[SRC_DIR + 'scenes/**/*.rb'] + Dir[SRC_DIR + 'sprites/**/*.rb'] + Dir[SRC_DIR + 'etc/**/*.rb']).each do |script|
   require script

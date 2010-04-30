@@ -1,25 +1,3 @@
-# Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
-#
-# This file is part of EasyRubygame.
-#
-# EasyRubygame is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# EasyRubygame is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
-# in addition, your should have received a copy of the GNU General
-# Public License, in a file called COPYING. If you did not
-# receive a copy of either of these documents, see
-# <http://www.gnu.org/licenses/>.
-
-
 module EasyRubygame
   # EasyRubygame's base sprite class. All sprites should inherit from
   # Sprite.
@@ -101,7 +79,7 @@ module EasyRubygame
       @images = Hash.new
       
       @animations = Hash.new
-      @animation_queue = Queue.new
+      @animation_queue = []
       @currently_animating = false
       
       if img_src
@@ -231,7 +209,12 @@ module EasyRubygame
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
     def add_image name, file
-	    @images[name] = Surface[file]
+	    surface = Surface[file]
+	    if surface
+	      @images[name] = surface
+	    else
+        raise "ERROR. Could not find the image \"#{file}.\" Exiting immediately. Make sure that \"#{file}\" is in resources/sprites."
+      end
     end
     
     # adds a hash of names to file locations to the images array.
@@ -246,7 +229,12 @@ module EasyRubygame
     # associated with the given name (by Sprite#add_image)
     def change_image name
       @name = name
-      self.surface = @images[name]
+      surface = @images[name]
+      if surface
+        self.surface = @images[name]
+      else
+        raise "ERROR. No image added with the name \"#{name}\""
+      end
     end
 
     # Makes this sprite invisible. While a sprite is invisible, none
@@ -282,6 +270,11 @@ module EasyRubygame
     # will set the y_velocity to 0 after 10 frames.
     def wait frames, &code
       @code_to_execute.push [frames, code]
+    end
+
+    # removes all current wait statements.
+    def remove_waits
+      @code_to_execute = []
     end
 
     private
@@ -350,7 +343,9 @@ module EasyRubygame
         @animation_queue.push(name)
       else
         @currently_animating = true
-        images_and_times = @animations[name]
+        # Marsh.load(Marshal.dump(foo)) creates a deep clone of foo.
+        # needed to fix bug when running animation multiple times
+        images_and_times = Marshal.load(Marshal.dump(@animations[name]))
         if images_and_times != nil
           play_frame(images_and_times[0], images_and_times[1])
         else
@@ -359,16 +354,25 @@ module EasyRubygame
       end
     end  
     
+    # stops the current animation, changes the image to the optional parmeter
+    # and clears the quenue of animations
+    def stop_all_animations return_to=nil
+      @currently_playing = false
+      @animation_queue = []
+      if return_to 
+        self.change_image return_to
+      end
+    end
+    
     private
     
     #helper method to play all of the frames in the animation
     def play_frame(images, times)
       img = images[0]
-      
       case img
       when String
-        self.add_image(images[0].to_sym, images[0])
-        self.change_image(images[0].to_sym)
+        self.add_image(img.to_sym, img)
+        self.change_image(img.to_sym)
       else
         self.change_image(img)
       end
@@ -377,9 +381,11 @@ module EasyRubygame
       case times
       when Numeric
         self.wait(times) do
-          play_frame(images, times)
+          if @currently_playing
+            play_frame(images, times)
+          end
         end
-      else
+      when Array
         time = times.shift
         if time == nil
           time = 1
@@ -391,6 +397,7 @@ module EasyRubygame
             return
           else
             self.wait(time) do
+              
               play_animation(@animation_queue.pop)
             end
           end
@@ -407,9 +414,6 @@ module EasyRubygame
     # way that makes Rubygame happy.
     def surface= surface
       @image = surface
-      if surface == nil
-        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
-      end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end
@@ -438,15 +442,27 @@ module EasyRubygame
 
         # key_pressed_*
         when "key pressed"
-          @@hooks[self][parts[2].intern] = name
+          if parts[2]
+            @@hooks[self][parts[2].intern] = name
+          else
+            #raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+          end
           
         # key_released_*
         when "key released"
-          @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          if parts[2]
+            @@hooks[self][KeyReleaseTrigger.new(parts[2].intern)] = name
+          else
+            raise "Missing the key in the name of some key_released method (ie you have key_pressed, not key_pressed_left)."
+          end
 
         # key_down_*
         when "key down"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             if EasyRubygame.keys[key]
               self.send name
@@ -455,7 +471,11 @@ module EasyRubygame
 
         # key_up_*      
         when "key up"
-          key = parts[2].intern
+          if parts[2]
+            key = parts[2].intern
+          else
+            raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
+          end
           @@update_procs[self].push proc {
             unless EasyRubygame.keys[key]
               self.send name

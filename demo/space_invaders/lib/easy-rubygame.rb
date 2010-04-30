@@ -23,6 +23,7 @@ require 'yaml'
 require 'lib/scenes'
 require 'lib/sprites'
 require 'lib/text'
+require 'lib/sounds'
 
 # Global EasyRubygame module. Escapsuates core functions and utilities.
 module EasyRubygame
@@ -52,6 +53,8 @@ module EasyRubygame
     # Initializes EasyRubygame. Called automatically by runner.rb.
     def init #:nodoc:
       Rubygame.init
+      TTF.setup
+      
       properties = YAML.load_file(BASE_DIR + 'properties.yml')
       EasyRubygame.window_height = properties['height']
       EasyRubygame.window_width = properties['width']
