@@ -45,15 +45,13 @@ class Ball < Sprite
 		end
 		
 		self.y_acceleration = 1
-		self.x_acceleration = 1
+		#self.x_acceleration = 1
+		
+		puts self.image_width
 		
 	end
-	
-	def pass_frame
-	  #puts "#{self.col_rect}"
-	end
 
-  def collide_with_Floor(floor)
+  def collide_with_Floor floor
     self.y_velocity = 0
     self.y = floor.y-self.rect.height
   end

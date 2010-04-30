@@ -52,7 +52,7 @@ module EasyRubygame
     # each frame. Can be negative.
     attr_accessor :y_acceleration
 
-    # Updates the position / velocity when hidden.
+    # Allows the code to update the position / velocity when hidden.
     attr_accessor :move_when_hidden
 
     # Whether this sprite is visible. Can also be changed and
@@ -69,7 +69,7 @@ module EasyRubygame
     attr_reader :images
 
     # Name of the current image
-    attr_reader :name
+    attr_reader :current_image
 
 	  # Sets up the sprite. Sets positions, velocities, and
 	  # accelerations to 0. The specified img_src is loaded and used
@@ -210,6 +210,31 @@ module EasyRubygame
              (@y < -@rect.height)
     end
     
+    # Returns the width, in pixles, of the current image
+    def image_width
+      return self.rect.width
+    end
+    
+    # Return the height, in pixles, of the current image
+    def image_height
+      return self.rect.height
+    end
+    
+    # depricated, remove in a few versions
+    def name
+      puts ' ______________________________________
+      / WARNING: name is depricated,         \
+      \ use image_name instead               /
+       --------------------------------------
+              \   ^__^
+               \  (oo)\_______
+                  (__)\       )\/\
+                      ||----w |
+                      ||     ||
+      '
+      return self.current_image
+    end
+    
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
@@ -233,7 +258,7 @@ module EasyRubygame
     # Changes the image this sprite is currently using to the image
     # associated with the given name (by Sprite#add_image)
     def change_image name
-      @name = name
+      @current_image = name
       surface = @images[name]
       if surface
         self.surface = @images[name]
