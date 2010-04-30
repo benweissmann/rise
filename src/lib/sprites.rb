@@ -273,7 +273,7 @@ module EasyRubygame
     end
 
     # removes all current wait statements.
-    def remove_waits
+    def clear_waits
       @code_to_execute = []
     end
 
