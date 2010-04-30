@@ -334,11 +334,16 @@ module EasyRubygame
     private
     
     # Called every frame to make Sprite#wait work
+    # Called every frame to make Sprite#wait work
     def update_wait #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
         if time == 0
-          self.instance_eval &code
+          begin
+            self.instance_eval &code
+          rescue ArgumentError
+            raise "No block was supplied to the wait."
+          end
           nil
         else
           time -= 1
