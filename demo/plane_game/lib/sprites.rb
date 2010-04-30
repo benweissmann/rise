@@ -209,7 +209,12 @@ module EasyRubygame
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
     def add_image name, file
-	    @images[name] = Surface[file]
+	    surface = Surface[file]
+	    if surface
+	      @images[name] = surface
+	    else
+        raise "ERROR. Could not find the image \"#{file}.\" Exiting immediately. Make sure that \"#{file}\" is in resources/sprites."
+      end
     end
     
     # adds a hash of names to file locations to the images array.
@@ -224,7 +229,12 @@ module EasyRubygame
     # associated with the given name (by Sprite#add_image)
     def change_image name
       @name = name
-      self.surface = @images[name]
+      surface = @images[name]
+      if surface
+        self.surface = @images[name]
+      else
+        raise "ERROR. No image added with the same \"#{name}\""
+      end
     end
 
     # Makes this sprite invisible. While a sprite is invisible, none
@@ -404,9 +414,6 @@ module EasyRubygame
     # way that makes Rubygame happy.
     def surface= surface
       @image = surface
-      if surface == nil
-        raise "ERROR. Could not find the image \"#{@name},\" exiting immediately. Check your spelling."
-      end
       @rect = @image.make_rect
       @rect.topleft = @x, @y
     end

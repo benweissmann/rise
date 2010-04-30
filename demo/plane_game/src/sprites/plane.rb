@@ -15,9 +15,6 @@ class Plane < Sprite
     # add explosion animation
     self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [7,7,7])
 
-    self.add_image(:hello, "not here")
-    self.change_image(:hello)
-
     # set x and y coordinates
     @y = y
     @x = x
