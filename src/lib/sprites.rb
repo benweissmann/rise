@@ -174,7 +174,7 @@ module EasyRubygame
     # Returns the integer distance between the bottom side of this
     # sprite and the bottom edge of the window.
     def distance_from_bottom
-      return EasyRubygame.window_width - @x - @rect.width
+      return EasyRubygame.window_height - @y - @rect.height
     end
 
     # Returns the smaller of:

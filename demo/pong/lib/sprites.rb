@@ -174,7 +174,7 @@ module EasyRubygame
     # Returns the integer distance between the bottom side of this
     # sprite and the bottom edge of the window.
     def distance_from_bottom
-      return EasyRubygame.window_width - @x - @rect.width
+      return EasyRubygame.window_height - @y - @rect.height
     end
 
     # Returns the smaller of:
@@ -561,13 +561,13 @@ module EasyRubygame
 
       def update_procs #:nodoc:
         procs = @@update_procs[self] 
-        procs = superclass.update_procs.merge(procs) unless superclass == Sprite
+        procs = (superclass.update_procs || {}).merge(procs) unless superclass == Sprite
         return procs
       end
 
       def hooks #:nodoc:
         hooks = @@hooks[self]
-        hooks = superclass.hooks.merge(hooks) unless superclass == Sprite
+        hooks = (superclass.hooks || {}).merge(hooks) unless superclass == Sprite
         return hooks
       end
     end
