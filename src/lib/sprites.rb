@@ -599,7 +599,21 @@ module EasyRubygame
               end
             end
           }
+          
+        when "collide top"
+          @@update_procs[self][name] = proc {
+            klass = Object.const_get parts[2..-1].join('_').intern
+            puts parts
+            #EasyRubygame.active_scene.sprites.each do |sprite|
+            #  sprite.update_rect
+            #  if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible and self != sprite
+            #    self.send name, sprite
+            #  end
+            #end
+          }
         end
+      
+        
       end
 
       def update_procs #:nodoc:

@@ -52,6 +52,10 @@ class Ball < Sprite
 		self.add_wait_until lambda {self.x >= 100}, lambda {puts "foo"}
 		
 	end
+	
+	def collide_top_with_Floor
+	  puts "foo"
+	end
 
   def collide_with_Floor floor
     self.y_velocity = 0
