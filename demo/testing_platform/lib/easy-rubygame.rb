@@ -54,6 +54,7 @@ module EasyRubygame
     def init #:nodoc:
       Rubygame.init
       TTF.setup
+      
       properties = YAML.load_file(BASE_DIR + 'properties.yml')
       EasyRubygame.window_height = properties['height']
       EasyRubygame.window_width = properties['width']

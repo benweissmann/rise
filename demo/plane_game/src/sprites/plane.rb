@@ -18,7 +18,7 @@ class Plane < Sprite
     # set x and y coordinates
     @y = y
     @x = x
-
+    
     # set default speed.
     @speed = 10
 
@@ -60,7 +60,7 @@ class Plane < Sprite
   
   def key_pressed_up
     if !@dead
-      @y_velocity = -@velocity_mag
+      @y_velocity = -@speed
     end
   end
   
@@ -72,7 +72,7 @@ class Plane < Sprite
   
   def key_pressed_down
     if !@dead
-      @y_velocity = @velocity_mag
+      @y_velocity = @speed
     end
   end
   
