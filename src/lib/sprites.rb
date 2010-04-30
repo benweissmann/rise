@@ -276,6 +276,12 @@ module EasyRubygame
     def clear_waits
       @code_to_execute = []
     end
+    
+    # depricated, see clear_waits
+    def remove_waits
+      puts "WARNING. remove_waits is depricated, and will be removed in a future version. Please use clear_waits instead."
+      self.clear_waits
+    end
 
     private
     
