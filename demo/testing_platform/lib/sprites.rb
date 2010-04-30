@@ -97,17 +97,18 @@ module EasyRubygame
       
       @can_move = true
       
+      @move_when_hidden = false
+      
     end
     
     # Main update method
     def update # :nodoc:
       update_wait
       
-      return unless @visible
-      self.class.update_procs.each {|name, proc| instance_eval &proc}
-      
+      puts "updating, visible = #{self.visible}, can_move = #{@can_move}, move_when_hidden = #{@move_when_hidden}"
+
       #will prevent it from moving if crippled
-      if @can_move
+      if @can_move and (@visible || @move_when_hidden)
         @prev_x, @prev_y = @x, @x
         
         @x += @x_velocity
@@ -115,7 +116,14 @@ module EasyRubygame
         
         @x_velocity += @x_acceleration
         @y_velocity += @y_acceleration
+        
+        
+          puts "updating move #{@prev_x}, #{@x}, #{@x_velocity}, #{@x_acceleration}"
+        
       end
+      
+      return unless @visible
+      self.class.update_procs.each {|name, proc| instance_eval &proc}
 
       begin
         if @x <= 0

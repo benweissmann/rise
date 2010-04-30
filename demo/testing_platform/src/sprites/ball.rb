@@ -30,14 +30,22 @@ class Ball < Sprite
 		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
 		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
 		
-		self.play_animation(:explode)
-		self.play_animation(:unexplode)
-		self.wait 25 do
-		  self.stop_all_animations(:default)
-		end
+		#self.play_animation(:explode)
+		#self.play_animation(:unexplode)
+		#self.wait 25 do
+		#  self.stop_all_animations(:default)
+		#end
 		#self.play_animation(:unexplode)
 		
+		@move_when_hidden = true
+		
+		self.hide
+		self.wait(10) do
+		  self.show
+		end
+		
 		self.y_acceleration = 1
+		self.x_acceleration = 1
 		
 	end
 	
