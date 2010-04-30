@@ -486,7 +486,7 @@ module EasyRubygame
         when "collide"
           @@update_procs[self][name] = proc {
             EasyRubygame.active_scene.sprites.each do |sprite|
-              if self.collide_sprite? sprite
+              if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
               end
             end
