@@ -26,7 +26,7 @@ class Plane < Sprite
     @dead = false
   end
   
-  def key_pressed_left
+  def key_pressed
     # "unless" is the opposite of if.
     # It's the same as saying "if not"
     if !@dead

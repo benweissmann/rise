@@ -442,7 +442,11 @@ module EasyRubygame
 
         # key_pressed_*
         when "key pressed"
-          @@hooks[self][parts[2].intern] = name
+          if parts[2]
+            @@hooks[self][parts[2].intern] = name
+          else
+            raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+          end
           
         # key_released_*
         when "key released"
