@@ -469,7 +469,7 @@ module EasyRubygame
                 if EasyRubygame.keys
                   keys_down = EasyRubygame.keys.reject {|key, value| !value}.keys
                   if keys_down.length > 0
-                    self.send name, keys_down
+                    self.send "keys_down", keys_down
                   end
                 end
               }
