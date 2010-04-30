@@ -273,7 +273,7 @@ module EasyRubygame
     end
 
     # removes all current wait statements.
-    def remove_waits
+    def clear_waits
       @code_to_execute = []
     end
 
@@ -445,7 +445,7 @@ module EasyRubygame
           if parts[2]
             @@hooks[self][parts[2].intern] = name
           else
-            #raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
+            raise "Missing the key in the name of some key_pressed method (ie you have key_pressed, not key_pressed_left)."
           end
           
         # key_released_*
@@ -458,17 +458,12 @@ module EasyRubygame
 
         # key_down_*
         when "key down"
-<<<<<<< HEAD
           if parts[2]
             key = parts[2].intern
           else
             raise "Missing the key in the name of some key_down method (ie you have key_pressed, not key_pressed_left)."
           end
-          @@update_procs[self].push proc {
-=======
-          key = parts[2].intern
           @@update_procs[self][name] = proc {
->>>>>>> e27f37a9d1f90c2516da6413bde77ab39036b537
             if EasyRubygame.keys[key]
               self.send name
             end
@@ -476,17 +471,12 @@ module EasyRubygame
 
         # key_up_*      
         when "key up"
-<<<<<<< HEAD
           if parts[2]
             key = parts[2].intern
           else
             raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
           end
-          @@update_procs[self].push proc {
-=======
-          key = parts[2].intern
           @@update_procs[self][name] = proc {
->>>>>>> e27f37a9d1f90c2516da6413bde77ab39036b537
             unless EasyRubygame.keys[key]
               self.send name
             end
