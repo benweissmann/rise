@@ -109,19 +109,17 @@ module EasyRubygame
       update_wait
 
       #will prevent it from moving if crippled
-      if @can_move and (@visible || @move_when_hidden)
-        @prev_x, @prev_y = @x, @x
-        
-        @x += @x_velocity
-        @y += @y_velocity
-        
-        @x_velocity += @x_acceleration
-        @y_velocity += @y_acceleration
+      if @can_move and !@visible and @move_when_hidden
+        update_movement
       end
       
       return unless @visible
-      self.class.update_procs.each {|name, proc| instance_eval &proc}
-
+      @@update_procs[self.class].each {|p| instance_eval &p}
+      
+      if @can_move
+        update_movement
+      end
+      
       begin
         if @x <= 0
           self.touch_left
@@ -143,6 +141,16 @@ module EasyRubygame
         self.update_rect
       end
       pass_frame if @visible
+    end
+    
+    def update_movement
+      @prev_x, @prev_y = @x, @x
+      
+      @x += @x_velocity
+      @y += @y_velocity
+      
+      @x_velocity += @x_acceleration
+      @y_velocity += @y_acceleration
     end
 
     # Updates @rect to reflect current @x and @y.
@@ -222,7 +230,7 @@ module EasyRubygame
     
     # depricated, remove in a few versions
     def name
-      puts ' ______________________________________
+      puts '      ______________________________________
       / WARNING: name is depricated,         \
       \ use image_name instead               /
        --------------------------------------
@@ -309,7 +317,7 @@ module EasyRubygame
     
     # depricated, see clear_waits
     def remove_waits
-      puts ' ______________________________________
+      puts '     ______________________________________
       / WARNING: remove_waits is depricated, \
       \ use clear_waits instead              /
        --------------------------------------
