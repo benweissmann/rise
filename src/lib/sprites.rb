@@ -52,6 +52,9 @@ module EasyRubygame
     # each frame. Can be negative.
     attr_accessor :y_acceleration
 
+    # Updates the position / velocity when hidden.
+    attr_accessor :move_when_hidden
+
     # Whether this sprite is visible. Can also be changed and
     # detected with hide, show, and visible?
     attr_accessor :visible
