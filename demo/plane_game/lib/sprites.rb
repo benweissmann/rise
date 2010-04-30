@@ -114,7 +114,7 @@ module EasyRubygame
       end
       
       return unless @visible
-      @@update_procs[self.class].each {|p| instance_eval &p}
+      self.class.update_procs.each {|name, proc| instance_eval &proc}
       
       if @can_move
         update_movement
