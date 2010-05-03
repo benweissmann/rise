@@ -9,17 +9,11 @@ end
 
 EasyRubygame.storage[:hello] = "world"
 ball = Ball.new 20, 50, 1, 1
-floor = Floor.new(0, 250)
+floor = Floor.new(100, 250)
+floor2 = Floor.new(100, 350)
+floor3 = New_Floor.new(50, 50)
+floor4 = Floor.new(225, 150)
 main_scene = Scene.new :green
-second_scene = Scene.new :blue
-test = Test2.new
-second_scene.sprites.push ball, floor, txt
 
-EasyRubygame.storage[:ss] = second_scene
-
-ball.wait 30 do 
-  EasyRubygame.active_scene = EasyRubygame.storage[:ss]
-end
-
-main_scene.sprites.push ball, floor, test
+main_scene.sprites.push ball, floor, floor2, floor3, floor4
 EasyRubygame.active_scene = main_scene

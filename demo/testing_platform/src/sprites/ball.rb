@@ -25,7 +25,7 @@ class Ball < Sprite
 		@x = start_x
 		@y = start_y
 		#@x_velocity = start_x_vel
-		@y_velocity = 0
+		@y_velocity = 5
 		
 		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
 		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
@@ -37,33 +37,60 @@ class Ball < Sprite
 		#end
 		#self.play_animation(:unexplode)
 		
-		@move_when_hidden = true
 		
-		self.hide
-		self.wait(10) do
-		  self.show
-		end
-		
-		self.y_acceleration = 1
+		#self.y_acceleration = 1
 		#self.x_acceleration = 1
-		
-		puts self.image_width
-		
-		self.add_wait_until lambda {self.x >= 100}, lambda {puts "foo"}
+		self.x_velocity = 4
 		
 	end
 	
-	def collide_top_with_Floor
-	  puts "foo"
+	def colliding_top_of_Floor floor
+	  puts "top"
+	  @y_velocity *= -1
+	end
+	
+	def colliding_bottom_of_Floor floor
+	  puts "bottom"
+	  @y_velocity *= -1
+	end
+	
+	def colliding_right_of_Floor floor
+	  puts "right"
+	  @x_velocity *= -1
+	end
+  
+  def colliding_left_of_Floor floor
+	  puts "left"
+	  @x_velocity *= -1
 	end
 
-  def collide_with_Floor floor
-    self.y_velocity = 0
-    self.y = floor.y-self.rect.height
-  end
+		def colliding_top_of_New_Floor floor
+  	  puts "top"
+  	  @y_velocity *= -1
+  	end
+
+  	def colliding_bottom_of_New_Floor floor
+  	  puts "bottom"
+  	  @y_velocity *= -1
+  	end
+
+  	def colliding_right_of_New_Floor floor
+  	  puts "right"
+  	  @x_velocity *= -1
+  	end
+
+  def colliding_left_of_New_Floor floor
+  	  puts "left"
+  	  @x_velocity *= -1
+  	end
+
+  #def collide_with_Floor floor
+   # self.y_velocity = 0
+   # self.y = floor.y-self.rect.height
+  #end
 
   def key_pressed_left
-    @x_velocity = -3
+    @x_velocity = -5
   end
   
   def key_released_left
@@ -71,7 +98,7 @@ class Ball < Sprite
   end
   
   def key_pressed_right
-    @x_velocity = 3
+    @x_velocity = 5
   end
   
   def key_released_right
@@ -79,23 +106,35 @@ class Ball < Sprite
   end
   
   def key_pressed_up
-    @y_velocity = -10
+    @y_velocity = -5
   end
-
-  def touch_top
-    @y_velocity = -@y_velocity
+  
+  def key_released_up
+    @y_velocity = 0
   end
-
-  def touch_bottom
+  
+  def key_pressed_down
+    @y_velocity = 5
+  end
+  
+  def key_released_down
     @y_velocity = 0
   end
 
+  def touch_top
+    @y_velocity *= -1
+  end
+
+  def touch_bottom
+    @y_velocity *= -1
+  end
+
   def touch_left
-    @x_velocity = -@x_velocity
+    @x_velocity *= -1
   end
 
   def touch_right
-    @x_velocity = -@x_velocity
+    @x_velocity *= -1
   end
   
 
