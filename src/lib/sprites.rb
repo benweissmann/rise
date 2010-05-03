@@ -733,7 +733,6 @@ module EasyRubygame
             EasyRubygame.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
-                self.call_collide_sides sprite
               end
             end
           }
