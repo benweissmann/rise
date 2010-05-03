@@ -25,6 +25,11 @@ module EasyRubygame
   #                    "collide_with_Ball" is called when this sprite
   #                    collides with an instance of Ball. The method
   #                    is passed the sprite it collided with.
+  # +colliding_*_of_$  Called when this sprite touches the * side of
+  #                    class $. For example, "colliding_left_of_Ball"
+  #                    is called when the sprite collides into the 
+  #                    boundry of Ball. The method passes the spirte
+  #                    that it collided with (in this case, Ball)
   class Sprite
     # include the Rubygame Sprite module
     include Sprites::Sprite
@@ -532,29 +537,23 @@ module EasyRubygame
       @y = new_y
     end
     
+    # the change in x from the last frame
     def delta_x
       return @x - @prev_x
     end
     
+    # the change in y from the last fame
     def delta_y
       return @y - @prev_y
     end
-
-    def collide_bottom_of_sprite? other
-      unless self.collide_sprite? other 
-        return false
-      end
-
-      other_bottom = other.y + other.image_height
-
-      return ((other_bottom > @y) and (other_bottom < @y + self.image_height) and (other.x < self.x_midpoint) and (other.x + other.image_width > self.x_midpoint))
-
-    end
     
+    #:nodoc:
     def call_collide_sides sprite
+      
       klass = sprite.class.to_s
       methods = @@collide_side_methods[self][klass.intern]
       
+      # checks to see if any colliding_*_of_klass methods have been defined
       if methods != []
         d_x = self.delta_x
         d_y = self.delta_y
@@ -574,7 +573,8 @@ module EasyRubygame
           x_direction = "left"
         end
         
-        #dealing with some edge cases
+        #dealing with some edge cases - ie cases where it hasn't moved
+        #or the slope is undefined or 0
         if d_x == 0 and d_y == 0
           return
         end
@@ -598,6 +598,9 @@ module EasyRubygame
         slope = d_y.to_f/d_x
         #assertion: slope is not equal to 0 or infinity
       
+        # connect the lines between the previous and current rects.
+        # now, see how many of those lines intersect with the rect
+        # of sprite. call the side that has the most.
         if moving_down #colliding top
           y_top_bottom = sprite.y
         else
@@ -613,24 +616,29 @@ module EasyRubygame
         top_bottom_intersects = 0
         left_right_intersects = 0
         
-        x_y_pairs = [[@x, @y], [@x, self.y_midpoint], [@x, @y+self.image_height], [self.x_midpoint, @y], [self.x_midpoint, @y+self.image_height], [@x+self.image_width, @y], [@x+self.image_width, self.y_midpoint], [@x+self.image_width, @y+self.image_height]]
+        original_distance = distance_between(@x, @y, @prev_x, @prev_y)
         
-        x_y_pairs.each do |point|
-          x_val = point[0]
-          y_val = point[1]
+        x_y_diff = [[0, 0], [0, self.image_height/2.0], [0, self.image_height], [self.image_width/2.0, 0], [self.image_width/2.0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height/2.0], [self.image_width, self.image_height]]
+        x_y_diff.each do |point|
+          x_val = point[0]+@x
+          y_val = point[1]+@y
           
           left_right_intercept = y_val + (x_left_right-x_val)*slope
           top_bottom_intercept = (y_top_bottom-y_val)/slope + x_val
           
-          if left_right_intercept > @y and left_right_intercept < @y + self.image_height
+       #   if left_right_intercept.between? point[1]+@prev_y, point[1]+@y or left_right_intercept.between? point[1]+@y, point[1]+@prev_y
+          if distance_between(@prev_x+point[0], @prev_y+point[1], x_left_right, left_right_intercept) < original_distance
             left_right_intersects += 1
           end
           
-          if top_bottom_intercept > @x and top_bottom_intercept < @x + self.image_width
+          #if top_bottom_intercept.between? point[0]+@prev_x, point[0]+@x or top_bottom_intercept.between? point[0]+@x, point[0]+@prev_x
+          if distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom) < original_distance
             top_bottom_intersects += 1
+         #   puts "top/bottom, pt #{point[0]+@prev_x}, #{point[0]+@x}, #{top_bottom_intercept}"
           end
           
         end
+        
         
         if 0 == top_bottom_intersects and 0 == left_right_intersects
           return
@@ -650,6 +658,10 @@ module EasyRubygame
         return
       end
     end
+    
+    def distance_between x_1, y_1, x_2, y_2
+      return Math.sqrt((x_1-x_2)**2 + (y_1-y_2)**2)
+    end 
     
     def send_direction_collision direction, sprite, possible_methods
       if possible_methods.include? direction
@@ -733,7 +745,6 @@ module EasyRubygame
             EasyRubygame.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
-                self.call_collide_sides sprite
               end
             end
           }

@@ -32,9 +32,9 @@ class Ball < Sprite
 		
 		#self.play_animation(:explode)
 		#self.play_animation(:unexplode)
-		#self.wait 25 do
-		#  self.stop_all_animations(:default)
-		#end
+		self.wait 25 do
+		  self.stop_all_animations(:default)
+		end
 		#self.play_animation(:unexplode)
 		
 		
@@ -45,22 +45,22 @@ class Ball < Sprite
 	end
 	
 	def colliding_top_of_Floor floor
-	  puts "top"
+	  #puts "top"
 	  @y_velocity *= -1
 	end
 	
 	def colliding_bottom_of_Floor floor
-	  puts "bottom"
+	  #puts "bottom"
 	  @y_velocity *= -1
 	end
 	
 	def colliding_right_of_Floor floor
-	  puts "right"
+	  #puts "right"
 	  @x_velocity *= -1
 	end
   
   def colliding_left_of_Floor floor
-	  puts "left"
+	  #puts "left"
 	  @x_velocity *= -1
 	end
 
