@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/4/trunk/resources/fonts
+END
+sans.ttf
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/4/trunk/resources/fonts/sans.ttf
+END
+mono.ttf
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/4/trunk/resources/fonts/mono.ttf
+END
+serif.ttf
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/4/trunk/resources/fonts/serif.ttf
+END
+COPYING.TXT
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/4/trunk/resources/fonts/COPYING.TXT
+END
+RELEASENOTES.TXT
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/4/trunk/resources/fonts/RELEASENOTES.TXT
+END
+README.TXT
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/4/trunk/resources/fonts/README.TXT
+END

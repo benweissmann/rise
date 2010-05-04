@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/40/trunk/src/sprites
+END
+PaddleClass.rb
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/23/trunk/src/sprites/PaddleClass.rb
+END
+BallClass.rb
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/40/trunk/src/sprites/BallClass.rb
+END
+Blockclass.rb
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/40/trunk/src/sprites/Blockclass.rb
+END
+PowerUpclass.rb
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/40/trunk/src/sprites/PowerUpclass.rb
+END
+README.TXT
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/4/trunk/src/sprites/README.TXT
+END

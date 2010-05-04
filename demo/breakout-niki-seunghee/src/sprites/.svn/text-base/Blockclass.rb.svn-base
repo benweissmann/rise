@@ -1,0 +1,36 @@
+#creating the block class which will get destroyed should make you "win"
+class Block < Sprite
+
+#initialized the blocks with a different image, location and number
+#of times it needs to be hit to break
+  def initialize(x, y, image, lives)
+    super(image)
+    @x = x
+    @y = y
+    @lives = lives
+  end
+
+# what happens to the bricks when it gets hit
+
+  def collide_with_Ball(ball)
+    @x_ctr = ball.x + ball.rect.width/2
+     if
+       @x <= @x_ctr and @x_ctr <= @x + @rect.width
+      ball.y_velocity *= -1
+
+     else
+       ball.x_velocity *= -1
+       
+    end
+
+    @lives = @lives -= 1
+     if @lives == 0
+      EasyRubygame.active_scene.sprites.delete(self)
+      
+       new_power_up = PowerUp.new(@x, @y, "awesome", 'powerup_homer.gif')
+       EasyRubygame.active_scene.sprites.push(new_power_up)
+
+     end
+
+    end
+   end

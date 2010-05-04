@@ -1,0 +1,24 @@
+class PowerUp < Sprite
+
+    #powerup possiblities array should pick a random one and drop it
+   powerup_options_array =[bigger_ball]
+   return powerup_options_array[rand(powerup_options_array.length)]
+    
+
+    def initialize(x, y, power, image)
+        super(image)
+        @x = x
+        @y = y
+        @power = power
+        @x_velocity = rand(10)
+        @y_velocity = rand(10)
+    end
+
+    def collide_with_Paddle(paddle)
+      EasyRubygame.active_scene.sprites.delete(self)
+
+    end
+
+
+
+end
