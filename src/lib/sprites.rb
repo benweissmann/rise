@@ -622,11 +622,17 @@ module EasyRubygame
         original_distance = distance_between(@x, @y, @prev_x, @prev_y)
         
         # 8 points around the rectangle
+        #x_y_diff = [[0, 0], [0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height]]
         x_y_diff = [[0, 0], [0, self.image_height/2.0], [0, self.image_height], [self.image_width/2.0, 0], [self.image_width/2.0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height/2.0], [self.image_width, self.image_height]]
+       
        
        # for each point, go through, find the other coordinate of the intersection
        # then see if it was a valid collision
         x_y_diff.each do |point|
+          
+          lr_hit_this_turn = false
+          tb_hit_this_turn = false
+          
           x_val = point[0]+@x
           y_val = point[1]+@y
        
@@ -634,11 +640,31 @@ module EasyRubygame
           left_right_intercept = y_val + (x_left_right-x_val)*slope
           top_bottom_intercept = (y_top_bottom-y_val)/slope + x_val
           
-          if distance_between(@prev_x+point[0], @prev_y+point[1], x_left_right, left_right_intercept) < original_distance
-            left_right_intersects += 1
+          lr_distance = distance_between(@prev_x+point[0], @prev_y+point[1], x_left_right, left_right_intercept)
+          tb_distance = distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom)
+          
+          if lr_distance < original_distance
+            #left_right_intersects += 1
+            lr_hit_this_turn = true
           end
           
-          if distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom) < original_distance
+          if tb_distance < original_distance
+            #top_bottom_intersects += 1
+            tb_hit_this_turn = true
+          end
+          
+          if lr_hit_this_turn and tb_hit_this_turn
+            if lr_distance < tb_distance
+              left_right_intersects += 1
+            elsif tb_distance < lr_distance
+              top_bottom_intersects += 1
+            else
+              left_right_intersects += 1
+              top_bottom_intersects += 1
+            end
+          elsif lr_hit_this_turn
+            left_right_intersects += 1
+          elsif tb_hit_this_turn
             top_bottom_intersects += 1
           end
           
