@@ -74,5 +74,18 @@ class Ball < Sprite
   def touch_bottom
       @y_velocity *= -1
   end
+  
+  def key_pressed_space
+    if @x_velocity != 0 and @y_velocity != 0
+      puts "here"
+      @old_y = @y_velocity
+      @old_x = @x_velocity
+      @x_velocity = 0
+      @y_velocity = @x_velocity
+    else
+      @y_velocity = @old_y
+      @x_velocity = @old_x
+    end
+  end
 
 end

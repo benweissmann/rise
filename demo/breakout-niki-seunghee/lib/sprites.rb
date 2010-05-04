@@ -646,11 +646,13 @@ module EasyRubygame
           if lr_distance < original_distance
             #left_right_intersects += 1
             lr_hit_this_turn = true
+            puts "lr, #{point[0]}, #{point[1]}"
           end
           
           if tb_distance < original_distance
             #top_bottom_intersects += 1
             tb_hit_this_turn = true
+            puts "tb, #{point[0]}, #{point[1]}"
           end
           
           if lr_hit_this_turn and tb_hit_this_turn
@@ -670,6 +672,7 @@ module EasyRubygame
           
         end
         
+        puts "#{top_bottom_intersects}, #{left_right_intersects}"
         
         if 0 == top_bottom_intersects and 0 == left_right_intersects
           return
@@ -677,6 +680,7 @@ module EasyRubygame
           #send both
           self.send_direction_collision y_direction, sprite, methods
           self.send_direction_collision x_direction, sprite, methods
+          puts slope
         elsif top_bottom_intersects > left_right_intersects
           #send top|down
           self.send_direction_collision y_direction, sprite, methods

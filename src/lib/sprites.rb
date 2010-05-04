@@ -644,12 +644,10 @@ module EasyRubygame
           tb_distance = distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom)
           
           if lr_distance < original_distance
-            #left_right_intersects += 1
             lr_hit_this_turn = true
           end
           
           if tb_distance < original_distance
-            #top_bottom_intersects += 1
             tb_hit_this_turn = true
           end
           
@@ -670,13 +668,13 @@ module EasyRubygame
           
         end
         
-        
         if 0 == top_bottom_intersects and 0 == left_right_intersects
           return
         elsif top_bottom_intersects == left_right_intersects
           #send both
           self.send_direction_collision y_direction, sprite, methods
           self.send_direction_collision x_direction, sprite, methods
+          puts slope
         elsif top_bottom_intersects > left_right_intersects
           #send top|down
           self.send_direction_collision y_direction, sprite, methods

@@ -48,8 +48,10 @@ module EasyRubygame
           x_y_diff.each do |points|
             x = points[0]
             y = points[1]
+         #   x = 0
+          #  y = 0
             
-            @background.draw_line_a([sprite.x+x, sprite.y+y],[sprite.prev_x+x, sprite.prev_y+y], [0,0,0])
+            @background.draw_line_a([sprite.prev_x+x, sprite.prev_y+y],[sprite.x+x, sprite.y+y], [0,0,0])
           end
      	  end
       end
