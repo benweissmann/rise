@@ -553,14 +553,16 @@ module EasyRubygame
       klass = sprite.class.to_s
       methods = @@collide_side_methods[self][klass.intern]
       
-      # checks to see if any colliding_*_of_klass methods have been defined
+      # checks to see if any colliding_*_of_#{klass} methods have been defined
       if methods != nil
         d_x = self.delta_x
         d_y = self.delta_y
         
+        # get the directions, as booleans, that the sprite is moving in
         moving_down = d_y > 0
         moving_right = d_x > 0
         
+        # figure out which methods we'll eventually need to call
         if moving_down
           y_direction = "top"
         else
@@ -577,16 +579,14 @@ module EasyRubygame
         #or the slope is undefined or 0
         if d_x == 0 and d_y == 0
           return
-        end
-        if d_x == 0
+        elsif d_x == 0
           if moving_down
             self.send_direction_collision y_direction, sprite, methods
           else
             self.send_direction_collision y_direction, sprite, methods
           end
           return
-        end
-        if d_y == 0
+        elsif d_y == 0
           if moving_right
             self.send_direction_collision x_direction, sprite, methods
           else
@@ -601,6 +601,9 @@ module EasyRubygame
         # connect the lines between the previous and current rects.
         # now, see how many of those lines intersect with the rect
         # of sprite. call the side that has the most.
+        
+        # these two if statements get the x/y coordinate of the interescion
+        # ie the side of the sprite's rect
         if moving_down #colliding top
           y_top_bottom = sprite.y
         else
@@ -618,23 +621,25 @@ module EasyRubygame
         
         original_distance = distance_between(@x, @y, @prev_x, @prev_y)
         
+        # 8 points around the rectangle
         x_y_diff = [[0, 0], [0, self.image_height/2.0], [0, self.image_height], [self.image_width/2.0, 0], [self.image_width/2.0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height/2.0], [self.image_width, self.image_height]]
+       
+       # for each point, go through, find the other coordinate of the intersection
+       # then see if it was a valid collision
         x_y_diff.each do |point|
           x_val = point[0]+@x
           y_val = point[1]+@y
-          
+       
+          # calculated using the point-slope form
           left_right_intercept = y_val + (x_left_right-x_val)*slope
           top_bottom_intercept = (y_top_bottom-y_val)/slope + x_val
           
-       #   if left_right_intercept.between? point[1]+@prev_y, point[1]+@y or left_right_intercept.between? point[1]+@y, point[1]+@prev_y
           if distance_between(@prev_x+point[0], @prev_y+point[1], x_left_right, left_right_intercept) < original_distance
             left_right_intersects += 1
           end
           
-          #if top_bottom_intercept.between? point[0]+@prev_x, point[0]+@x or top_bottom_intercept.between? point[0]+@x, point[0]+@prev_x
           if distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom) < original_distance
             top_bottom_intersects += 1
-         #   puts "top/bottom, pt #{point[0]+@prev_x}, #{point[0]+@x}, #{top_bottom_intercept}"
           end
           
         end
@@ -815,8 +820,6 @@ module EasyRubygame
             end
           }
         end
-        
-        p @@update_procs[self]
       end
 
       def update_procs #:nodoc:
