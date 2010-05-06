@@ -242,9 +242,9 @@ module EasyRubygame
     
     # depricated, remove in a few versions
     def name
-      puts '      ______________________________________
+      puts '       ______________________________________
       / WARNING: name is depricated,         \
-      \ use image_name instead               /
+      \ use current_image instead            /
        --------------------------------------
               \   ^__^
                \  (oo)\_______
