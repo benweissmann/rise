@@ -42,6 +42,18 @@ module EasyRubygame
       @background.blit EasyRubygame.screen, [0,0], nil
       @sprites.each do |sprite|
      	  sprite.draw(EasyRubygame.screen) if sprite.visible?
+     	#  if sprite.instance_of? Ball
+     	    #@background.draw_line_a([0,0], [100,100], [0,0,0])
+     	   # x_y_diff = [[0, 0], [0, sprite.image_height/2.0], [0, sprite.image_height], [sprite.image_width/2.0, 0], [sprite.image_width/2.0, sprite.image_height], [sprite.image_width, 0], [sprite.image_width, sprite.image_height/2.0], [sprite.image_width, sprite.image_height]]
+         # x_y_diff.each do |points|
+         #   x = points[0]
+         #   y = points[1]
+         #   x = 0
+          #  y = 0
+            
+          #  @background.draw_line_a([sprite.prev_x+x, sprite.prev_y+y],[sprite.x+x, sprite.y+y], [0,0,0])
+          #end
+     	  #end
       end
     end
 

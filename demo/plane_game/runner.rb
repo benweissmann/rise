@@ -44,6 +44,8 @@ include Rubygame::Events
 include Rubygame::EventActions
 include Rubygame::EventTriggers
 
+require 'set'
+
 # Autoload resources from resources directories
 Surface.autoload_dirs = [ RESOURCE_DIR + 'images/' ]
 Sound.autoload_dirs = [ RESOURCE_DIR + 'sounds/']
