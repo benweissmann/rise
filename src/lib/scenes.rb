@@ -25,6 +25,9 @@ module EasyRubygame
 
       if bg.kind_of? String
         image = Surface[bg]
+        if image.nil?
+          raise "Can't find background image #{bg}."
+        end
         0.step EasyRubygame.window_width, image.w do |x|
           0.step EasyRubygame.window_height, image.h do |y|
             image.blit @background, [x, y]
