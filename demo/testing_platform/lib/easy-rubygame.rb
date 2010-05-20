@@ -67,7 +67,12 @@ module EasyRubygame
       @storage = {}
 
       @clock = Clock.new
-	    @clock.target_framerate = 30
+	    fps = properties['fps']
+	    if fps == nil
+	      fps = 30
+	    end
+	    @clock.target_framerate = fps
+	    
 	    
 	    @start_time = Time.new.to_i
 	    
@@ -145,6 +150,14 @@ module EasyRubygame
       return color.to_rgba_ary[0..2].collect{|n| n*255}
     end
     
+    def active_scene=(new_scene)
+      
+      if nil == new_scene
+        raise("Active scene was set to nil, must be an initialized Scene")
+      end
+      
+      @active_scene = new_scene
+    end
   end
 end
 

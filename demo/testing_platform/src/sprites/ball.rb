@@ -21,7 +21,7 @@
 
 class Ball < Sprite
 	def initialize start_x, start_y, start_x_vel, start_y_vel
-		super('ball.gif')
+		super('portal_swirl.gif')
 		@x = start_x
 		@y = start_y
 		#@x_velocity = start_x_vel
@@ -42,6 +42,14 @@ class Ball < Sprite
 		#self.x_acceleration = 1
 		self.x_velocity = 4
 		
+	end
+	
+	def key_pressed_1
+	  exit
+	end
+	
+	def pass_frame
+	  p EasyRubygame.keys
 	end
 	
 	def colliding_top_of_Floor floor
