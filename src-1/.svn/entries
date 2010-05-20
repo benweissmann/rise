@@ -1,49 +1,0 @@
-8
-
-dir
-49
-https://gamenateandjesse.googlecode.com/svn/trunk/src
-https://gamenateandjesse.googlecode.com/svn
-
-
-
-2010-05-05T13:47:18.893282Z
-48
-will.stoddard@comcast.net
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-09e06d87-c11e-f1db-2f0b-0ec83d77f512
-
-scenes
-dir
-
-main.rb
-file
-51
-
-
-
-2010-05-06T23:10:37.000000Z
-8829e3df48979cf1fa59bd24fb2aa82d
-2010-05-06T23:14:06.636013Z
-51
-will.stoddard@comcast.net
-
-sprites
-dir
-
-etc
-dir
-
