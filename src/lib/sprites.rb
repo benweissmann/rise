@@ -1,11 +1,18 @@
+## ERG desc
 module EasyRubygame
-  # EasyRubygame's base sprite class. All sprites should inherit from
+  ## EasyRubygame's base sprite class. All sprites should inherit from
   # Sprite.
   #
   # Classes that inherit from sprite can define "magic methods". These
   # methods are called automatically based on their name.
   #
   # +pass_frame+::     Called every frame
+  #
+  # +touch_side+::     Called when this sprite touches any side of
+  #                    a Scene.
+  # +touch_<side>+::   <side> can be one of top, bottom, left, or
+  #                    right. Called when this sprites touches the
+  #                    specified side of a Scene.
   # +key_pressed_*+::  Called when a specific key is pressed. For
   #                    example, "key_pressed_k" is called when the
   #                    "k" key is pressed.
@@ -35,10 +42,10 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    # The current x position of the top-left corner of this sprite.
+    ## The current x position of the top-left corner of this sprite.
     attr_accessor :x
 
-    # The current y position of the top-left corner of this sprite.
+    ## The current y position of the top-left corner of this sprite.
     attr_accessor :y
 
     # The x position of this sprite will be adjusted by this amount
@@ -76,6 +83,7 @@ module EasyRubygame
     # Name of the current image
     attr_reader :current_image
 
+	  ## 
 	  # Sets up the sprite. Sets positions, velocities, and
 	  # accelerations to 0. The specified img_src is loaded and used
 	  # as the sprite's default image. 
@@ -132,28 +140,34 @@ module EasyRubygame
         update_movement
       end
       
-      begin
-        if @x <= 0
-          self.touch_left
-        elsif @x + @rect.width >= EasyRubygame.window_width
-          self.touch_right
-        end
-
-        if @y <= 0
-          self.touch_top
-        elsif @y + @rect.height >= EasyRubygame.window_height
-          self.touch_bottom
-        end
-      rescue NoMethodError
-        # ignore NoMethodErrors -- the subclass might not have
-        # defined touch_* methods
+      if @x <= 0
+        self.safe_call :touch_left
+      elsif @x + @rect.width >= EasyRubygame.window_width
+        self.safe_call :touch_right
       end
+
+      if @y <= 0
+        self.safe_call :touch_top
+      elsif @y + @rect.height >= EasyRubygame.window_height
+        self.safe_call :touch_bottom
+      end
+      
+      self.safe_call :touch_side
 
       unless @rect.nil?
         self.update_rect
       end
       pass_frame if @visible
     end
+    
+    private
+    
+    # Calls a method iff this sprite responds to the given method.
+    def safe_call method
+      self.call method if self.respond_to? method
+    end
+    
+    public
     
     def update_movement
       @prev_x, @prev_y = @x, @y
@@ -165,7 +179,7 @@ module EasyRubygame
       @y_velocity += @y_acceleration
     end
 
-    # Updates @rect to reflect current @x and @y.
+    ## Updates @rect to reflect current @x and @y.
     def update_rect #:nodoc:
       @rect.topleft = @x, @y
     end
@@ -173,6 +187,7 @@ module EasyRubygame
     def pass_frame #:nodoc:
     end
 
+    ##
     # Returns the integer distance between the left side of this
     # sprite and the left edge of the window.
     def distance_from_left
@@ -298,6 +313,12 @@ module EasyRubygame
     def show
       @visible = true
     end
+    
+    # Removes this sprite from the active scene. DOES NOT remove it
+    # from any other scenes.
+    def remove
+      EasyRubygame.active_scene.sprite.delete self
+    end
 
     # Returns a boolean representing the visibility of this sprite.
     def visible?
@@ -374,7 +395,6 @@ module EasyRubygame
     private
     
     # Called every frame to make Sprite#wait work
-    # Called every frame to make Sprite#wait work
     def update_wait #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
@@ -396,7 +416,7 @@ module EasyRubygame
     public
     
     # Stops this sprite from moving due to its velocity or
-    # acceleration. It can stil be move by changing @x and @y.
+    # acceleration. It can still be moved by changing @x and @y.
     # See Sprite#go
     def stop
       @can_move = false

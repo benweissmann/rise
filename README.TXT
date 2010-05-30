@@ -40,11 +40,25 @@ for contributing!
 
 == Credits
 
-=== Developers
+=== Core Developers
 - Ben Weissmann
 - Mason Glidden
 
+=== Demo Developers
+All demos are maintained and edited by the core developers; however,
+some demos were created in collaboration with other developers, as
+listed below.
+
+- Adventure Game: Nate Lamkin, Will Stoddard, Jesse McQuillan
+- Breakout: Niki Edmunds, SeungHee Han
+- Project Eron: Andrew Kelliher, J.R. Lee
+- Rock 'em, Sock 'em Robots: Bruce Duggan, Max Samels
+- Synth Hero: Andrew Dempsey, Ben-Ben Fleuraguste
+
+
 === Projects
+The following projects and libraries are used by EasyRubygame.
+
 - Rubygame (http://rubygame.org/)
 - Ruby (http://www.ruby-lang.org/en/)
 - SDL (http://www.libsdl.org/)
