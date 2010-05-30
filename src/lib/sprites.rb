@@ -10,7 +10,7 @@ module EasyRubygame
   #
   # +touch_side+::     Called when this sprite touches any side of
   #                    a Scene.
-  # +touch_<side>+::   <side> can be one of top, bottom, left, or
+  # +touch_*+::        * can be one of top, bottom, left, or
   #                    right. Called when this sprites touches the
   #                    specified side of a Scene.
   # +key_pressed_*+::  Called when a specific key is pressed. For
@@ -181,9 +181,39 @@ module EasyRubygame
       
       @x_velocity += @x_acceleration
       @y_velocity += @y_acceleration
+      
+      if self.still?
+        change_image :not_moving if @images.has_key? :not_moving
+      elsif @x_velocity.abs > @y_velocity.abs
+        if @x_velocity > 0 and @images.has_key? :moving_right
+          change_image :moving_right
+        elsif @x_velocity < 0 and @images.has_key? :moving_left
+          change_image :moving_left
+        end
+      else
+        if @y_velocity > 0 and @images.has_key? :moving_down
+          change_image :moving_down
+        elsif @y_velocity < 0 and @images.has_key? :moving_up
+          change_image :moving_up
+        end
+      end
+    end
+    
+    # Returns true if this sprite is not moving, false otherwise.
+    # 
+    # See also: Sprite#moving?
+    def still?
+      return ((@x_velocity == 0 and @y_velocity == 0) or @can_move == false)
+    end
+    
+    # Returns true if this sprite is moving, false otherwise.
+    #
+    # See also: Sprite#still?
+    def moving?
+      return (not still?)
     end
 
-    ## Updates @rect to reflect current @x and @y.
+    # Updates @rect to reflect current @x and @y.
     def update_rect #:nodoc:
       @rect.topleft = @x, @y
     end
@@ -277,6 +307,14 @@ module EasyRubygame
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
+    #
+    # Certain image names have special significance.
+    # +:default+ ::   The default sprite, set to the argument
+    #                 passed to Sprite#initialize.
+    # +:moving_*+ ::  * is one of left, right, up, or down. A sprite
+    #                 will automatically change to this image when it
+    #                 is moving in the given direction, as determined
+    #                 by its velocity.
     def add_image name, file
 	    surface = Surface[file]
 	    if surface
