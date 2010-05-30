@@ -141,30 +141,34 @@ module EasyRubygame
       end
       
       if @x <= 0
-        self.safe_call :touch_left
+        handle_side_touch :left
       elsif @x + @rect.width >= EasyRubygame.window_width
-        self.safe_call :touch_right
+        handle_side_touch :right
       end
 
       if @y <= 0
-        self.safe_call :touch_top
+        handle_side_touch :top
       elsif @y + @rect.height >= EasyRubygame.window_height
-        self.safe_call :touch_bottom
+        handle_side_touch :bottom
       end
-      
-      self.safe_call :touch_side
 
       unless @rect.nil?
-        self.update_rect
+        update_rect
       end
       pass_frame if @visible
     end
     
     private
     
+    # Calls touch_<side> and touch_side.
+    def handle_side_touch side
+      safe_call "touch_#{side}".intern
+      safe_call :touch_side
+    end
+    
     # Calls a method iff this sprite responds to the given method.
     def safe_call method
-      self.call method if self.respond_to? method
+      send method if respond_to? method
     end
     
     public
@@ -316,8 +320,8 @@ module EasyRubygame
     
     # Removes this sprite from the active scene. DOES NOT remove it
     # from any other scenes.
-    def remove
-      EasyRubygame.active_scene.sprite.delete self
+    def delete
+      EasyRubygame.active_scene.sprites.delete self
     end
 
     # Returns a boolean representing the visibility of this sprite.
