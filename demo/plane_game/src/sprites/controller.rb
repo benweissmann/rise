@@ -27,13 +27,13 @@ class Controller < Sprite
   # drops a missile
   def drop_missile
       # Select random x coordinate to drop missile from
-      x_coord = rand(EasyRubygame.window_width)
+      x_coord = rand(RISE.window_width)
 
       # create missile
       missile = Missile.new(x_coord)
 
       # Add missile to active scene
-      EasyRubygame.active_scene.sprites.push(missile)
+      RISE.active_scene.sprites.push(missile)
 
       # re-queue   
       queue_missile_drop

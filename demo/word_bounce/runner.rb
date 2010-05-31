@@ -2,27 +2,27 @@
 
 # Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
 #
-# This file is part of EasyRubygame.
+# This file is part of RISE.
 #
-# EasyRubygame is free software: you can redistribute it and/or modify
+# RISE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# EasyRubygame is distributed in the hope that it will be useful,
+# RISE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
+# License along with RISE, in a file called COPYING.LESSER.
 # in addition, your should have received a copy of the GNU General
 # Public License, in a file called COPYING. If you did not
 # receive a copy of either of these documents, see
 # <http://www.gnu.org/licenses/>.
 
 
-# Default runner for EasyRubygame apps.
+# Default runner for RISE apps.
 # Don't change this unless you know what you're doing!
 
 # The base directory (this directory this file is in)
@@ -44,16 +44,18 @@ include Rubygame::Events
 include Rubygame::EventActions
 include Rubygame::EventTriggers
 
+require 'set'
+
 # Autoload resources from resources directories
 Surface.autoload_dirs = [ RESOURCE_DIR + 'images/' ]
 Sound.autoload_dirs = [ RESOURCE_DIR + 'sounds/']
 
-# Load EasyRubygame
+# Load RISE
 require 'lib/easy-rubygame'
-include EasyRubygame
+include RISE
 
 # Run Rubygame initialization
-EasyRubygame.init
+RISE.init
 
 # Load scenes and sprites
 (Dir[SRC_DIR + 'scenes/**/*.rb'] + Dir[SRC_DIR + 'sprites/**/*.rb'] + Dir[SRC_DIR + 'etc/**/*.rb']).each do |script|
@@ -65,4 +67,4 @@ end
 require 'src/main'
 
 # Start game!
-EasyRubygame.run
+RISE.run

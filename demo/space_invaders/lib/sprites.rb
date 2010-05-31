@@ -1,11 +1,18 @@
-module EasyRubygame
-  # EasyRubygame's base sprite class. All sprites should inherit from
+## ERG desc
+module RISE
+  ## RISE's base sprite class. All sprites should inherit from
   # Sprite.
   #
   # Classes that inherit from sprite can define "magic methods". These
   # methods are called automatically based on their name.
   #
   # +pass_frame+::     Called every frame
+  #
+  # +touch_side+::     Called when this sprite touches any side of
+  #                    a Scene.
+  # +touch_*+::        * can be one of top, bottom, left, or
+  #                    right. Called when this sprites touches the
+  #                    specified side of a Scene.
   # +key_pressed_*+::  Called when a specific key is pressed. For
   #                    example, "key_pressed_k" is called when the
   #                    "k" key is pressed.
@@ -25,15 +32,20 @@ module EasyRubygame
   #                    "collide_with_Ball" is called when this sprite
   #                    collides with an instance of Ball. The method
   #                    is passed the sprite it collided with.
+  # +colliding_*_of_$  Called when this sprite touches the * side of
+  #                    class $. For example, "colliding_left_of_Ball"
+  #                    is called when the sprite collides into the 
+  #                    boundry of Ball. The method passes the spirte
+  #                    that it collided with (in this case, Ball)
   class Sprite
     # include the Rubygame Sprite module
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    # The current x position of the top-left corner of this sprite.
+    ## The current x position of the top-left corner of this sprite.
     attr_accessor :x
 
-    # The current y position of the top-left corner of this sprite.
+    ## The current y position of the top-left corner of this sprite.
     attr_accessor :y
 
     # The x position of this sprite will be adjusted by this amount
@@ -71,6 +83,7 @@ module EasyRubygame
     # Name of the current image
     attr_reader :current_image
 
+	  ## 
 	  # Sets up the sprite. Sets positions, velocities, and
 	  # accelerations to 0. The specified img_src is loaded and used
 	  # as the sprite's default image. 
@@ -97,12 +110,17 @@ module EasyRubygame
       @@hooks[self.class] ||= Hash.new
       self.make_magic_hooks self.class.hooks
       
+      @@collide_side_methods[self.class] ||= Hash.new []
+      
       @start_time = Time.new.to_i
       
       @can_move = true
       
       @move_when_hidden = false
       
+      @side_collides = self.class.colliding_side_methods
+      
+      @collided_with_last_frame = Set.new []
     end
     
     # Main update method
@@ -122,37 +140,77 @@ module EasyRubygame
         update_movement
       end
       
-      begin
-        if @x <= 0
-          self.touch_left
-        elsif @x + @rect.width >= EasyRubygame.window_width
-          self.touch_right
-        end
+      if @x <= 0
+        handle_side_touch :left
+      elsif @x + @rect.width >= RISE.window_width
+        handle_side_touch :right
+      end
 
-        if @y <= 0
-          self.touch_top
-        elsif @y + @rect.height >= EasyRubygame.window_height
-          self.touch_bottom
-        end
-      rescue NoMethodError
-        # ignore NoMethodErrors -- the subclass might not have
-        # defined touch_* methods
+      if @y <= 0
+        handle_side_touch :top
+      elsif @y + @rect.height >= RISE.window_height
+        handle_side_touch :bottom
       end
 
       unless @rect.nil?
-        self.update_rect
+        update_rect
       end
       pass_frame if @visible
     end
     
+    private
+    
+    # Calls touch_<side> and touch_side.
+    def handle_side_touch side
+      safe_call "touch_#{side}".intern
+      safe_call :touch_side
+    end
+    
+    # Calls a method iff this sprite responds to the given method.
+    def safe_call method
+      send method if respond_to? method
+    end
+    
+    public
+    
     def update_movement
-      @prev_x, @prev_y = @x, @x
+      @prev_x, @prev_y = @x, @y
       
       @x += @x_velocity
       @y += @y_velocity
       
       @x_velocity += @x_acceleration
       @y_velocity += @y_acceleration
+      
+      if self.still?
+        change_image :not_moving if @images.has_key? :not_moving
+      elsif @x_velocity.abs > @y_velocity.abs
+        if @x_velocity > 0 and @images.has_key? :moving_right
+          change_image :moving_right
+        elsif @x_velocity < 0 and @images.has_key? :moving_left
+          change_image :moving_left
+        end
+      else
+        if @y_velocity > 0 and @images.has_key? :moving_down
+          change_image :moving_down
+        elsif @y_velocity < 0 and @images.has_key? :moving_up
+          change_image :moving_up
+        end
+      end
+    end
+    
+    # Returns true if this sprite is not moving, false otherwise.
+    # 
+    # See also: Sprite#moving?
+    def still?
+      return ((@x_velocity == 0 and @y_velocity == 0) or @can_move == false)
+    end
+    
+    # Returns true if this sprite is moving, false otherwise.
+    #
+    # See also: Sprite#still?
+    def moving?
+      return (not still?)
     end
 
     # Updates @rect to reflect current @x and @y.
@@ -163,6 +221,7 @@ module EasyRubygame
     def pass_frame #:nodoc:
     end
 
+    ##
     # Returns the integer distance between the left side of this
     # sprite and the left edge of the window.
     def distance_from_left
@@ -172,7 +231,7 @@ module EasyRubygame
     # Returns the integer distance between the right side of this
     # sprite and the right edge of the window.
     def distance_from_right
-      return EasyRubygame.window_width - @x - @rect.width
+      return RISE.window_width - @x - @rect.width
     end
 
     # Returns the integer distance between the top side of this
@@ -184,7 +243,7 @@ module EasyRubygame
     # Returns the integer distance between the bottom side of this
     # sprite and the bottom edge of the window.
     def distance_from_bottom
-      return EasyRubygame.window_height - @y - @rect.height
+      return RISE.window_height - @y - @rect.height
     end
 
     # Returns the smaller of:
@@ -214,8 +273,8 @@ module EasyRubygame
     # Returns true if no part of this sprite is onscreen, false
     # otherwise.
     def offscreen?
-      return (@x > EasyRubygame.window_width) ||
-             (@y > EasyRubygame.window_height) ||
+      return (@x > RISE.window_width) ||
+             (@y > RISE.window_height) ||
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
@@ -232,9 +291,9 @@ module EasyRubygame
     
     # depricated, remove in a few versions
     def name
-      puts '      ______________________________________
+      puts '       ______________________________________
       / WARNING: name is depricated,         \
-      \ use image_name instead               /
+      \ use current_image instead            /
        --------------------------------------
               \   ^__^
                \  (oo)\_______
@@ -248,6 +307,14 @@ module EasyRubygame
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
+    #
+    # Certain image names have special significance.
+    # +:default+ ::   The default sprite, set to the argument
+    #                 passed to Sprite#initialize.
+    # +:moving_*+ ::  * is one of left, right, up, or down. A sprite
+    #                 will automatically change to this image when it
+    #                 is moving in the given direction, as determined
+    #                 by its velocity.
     def add_image name, file
 	    surface = Surface[file]
 	    if surface
@@ -288,6 +355,12 @@ module EasyRubygame
     def show
       @visible = true
     end
+    
+    # Removes this sprite from the active scene. DOES NOT remove it
+    # from any other scenes.
+    def delete
+      RISE.active_scene.sprites.delete self
+    end
 
     # Returns a boolean representing the visibility of this sprite.
     def visible?
@@ -309,7 +382,7 @@ module EasyRubygame
     # <tt> self.add_wait_until lambda {@x > 100}, lambda {puts "hi there!"} </tt>
     # will puts "hi there!" after x gets past 100. 
     # Lambda is a method that turns code into an object that can be
-    # easily passed to methods.
+    # easily passed to methods. pred should return a boolean
     def add_wait_until pred, function
       @wait_untils.push [pred, function]
     end
@@ -364,7 +437,6 @@ module EasyRubygame
     private
     
     # Called every frame to make Sprite#wait work
-    # Called every frame to make Sprite#wait work
     def update_wait #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
@@ -386,7 +458,7 @@ module EasyRubygame
     public
     
     # Stops this sprite from moving due to its velocity or
-    # acceleration. It can stil be move by changing @x and @y.
+    # acceleration. It can still be moved by changing @x and @y.
     # See Sprite#go
     def stop
       @can_move = false
@@ -497,7 +569,6 @@ module EasyRubygame
         end
       end
     end
-        
 
     # Changes the current Surface (used as the sprite's image) in a
     # way that makes Rubygame happy.
@@ -508,11 +579,192 @@ module EasyRubygame
     end
 
     public
+    
+    
+    def x_midpoint
+      return @x + self.image_width/2
+    end
+
+    def y_midpoint
+      return @y + self.image_height/2
+    end
+
+    def x=(new_x)
+      @prev_x = @x
+      @x = new_x
+    end
+    
+    def y=(new_y)
+      @prev_y = @y
+      @y = new_y
+    end
+    
+    # the change in x from the last frame
+    def delta_x
+      return @x - @prev_x
+    end
+    
+    # the change in y from the last fame
+    def delta_y
+      return @y - @prev_y
+    end
+    
+    #:nodoc:
+    def call_collide_sides sprite
+      
+      klass = sprite.class.to_s
+      methods = @@collide_side_methods[self][klass.intern]
+      
+      # checks to see if any colliding_*_of_#{klass} methods have been defined
+      if methods != nil
+        d_x = self.delta_x
+        d_y = self.delta_y
+        
+        # get the directions, as booleans, that the sprite is moving in
+        moving_down = d_y > 0
+        moving_right = d_x > 0
+        
+        # figure out which methods we'll eventually need to call
+        if moving_down
+          y_direction = "top"
+        else
+          y_direction = "bottom"
+        end
+        
+        if moving_right
+          x_direction = "right"
+        else
+          x_direction = "left"
+        end
+        
+        #dealing with some edge cases - ie cases where it hasn't moved
+        #or the slope is undefined or 0
+        if d_x == 0 and d_y == 0
+          return
+        elsif d_x == 0
+          if moving_down
+            self.send_direction_collision y_direction, sprite, methods
+          else
+            self.send_direction_collision y_direction, sprite, methods
+          end
+          return
+        elsif d_y == 0
+          if moving_right
+            self.send_direction_collision x_direction, sprite, methods
+          else
+            self.send_direction_collision x_direction, sprite, methods
+          end
+          return
+        end
+      
+        slope = d_y.to_f/d_x
+        #assertion: slope is not equal to 0 or infinity
+      
+        # connect the lines between the previous and current rects.
+        # now, see how many of those lines intersect with the rect
+        # of sprite. call the side that has the most.
+        
+        # these two if statements get the x/y coordinate of the interescion
+        # ie the side of the sprite's rect
+        if moving_down #colliding top
+          y_top_bottom = sprite.y
+        else
+          y_top_bottom = sprite.y+sprite.image_height
+        end
+        
+        if moving_right #colliding left
+          x_left_right = sprite.x
+        else
+          x_left_right = sprite.x+sprite.image_width
+        end
+        
+        top_bottom_intersects = 0
+        left_right_intersects = 0
+        
+        original_distance = distance_between(@x, @y, @prev_x, @prev_y)
+        
+        # 8 points around the rectangle
+        #x_y_diff = [[0, 0], [0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height]]
+        x_y_diff = [[0, 0], [0, self.image_height/2.0], [0, self.image_height], [self.image_width/2.0, 0], [self.image_width/2.0, self.image_height], [self.image_width, 0], [self.image_width, self.image_height/2.0], [self.image_width, self.image_height]]
+       
+       
+       # for each point, go through, find the other coordinate of the intersection
+       # then see if it was a valid collision
+        x_y_diff.each do |point|
+          
+          lr_hit_this_turn = false
+          tb_hit_this_turn = false
+          
+          x_val = point[0]+@x
+          y_val = point[1]+@y
+       
+          # calculated using the point-slope form
+          left_right_intercept = y_val + (x_left_right-x_val)*slope
+          top_bottom_intercept = (y_top_bottom-y_val)/slope + x_val
+          
+          lr_distance = distance_between(@prev_x+point[0], @prev_y+point[1], x_left_right, left_right_intercept)
+          tb_distance = distance_between(@prev_x+point[0], @prev_y+point[1], top_bottom_intercept, y_top_bottom)
+          
+          if lr_distance < original_distance
+            lr_hit_this_turn = true
+          end
+          
+          if tb_distance < original_distance
+            tb_hit_this_turn = true
+          end
+          
+          if lr_hit_this_turn and tb_hit_this_turn
+            if lr_distance < tb_distance
+              left_right_intersects += 1
+            elsif tb_distance < lr_distance
+              top_bottom_intersects += 1
+            else
+              left_right_intersects += 1
+              top_bottom_intersects += 1
+            end
+          elsif lr_hit_this_turn
+            left_right_intersects += 1
+          elsif tb_hit_this_turn
+            top_bottom_intersects += 1
+          end
+          
+        end
+        
+        if 0 == top_bottom_intersects and 0 == left_right_intersects
+          return
+        elsif top_bottom_intersects == left_right_intersects
+          #send both
+          self.send_direction_collision y_direction, sprite, methods
+          self.send_direction_collision x_direction, sprite, methods
+          puts slope
+        elsif top_bottom_intersects > left_right_intersects
+          #send top|down
+          self.send_direction_collision y_direction, sprite, methods
+        else
+          #send left|right
+          self.send_direction_collision x_direction, sprite, methods
+        end
+      
+      else
+        return
+      end
+    end
+    
+    def distance_between x_1, y_1, x_2, y_2
+      return Math.sqrt((x_1-x_2)**2 + (y_1-y_2)**2)
+    end 
+    
+    def send_direction_collision direction, sprite, possible_methods
+      if possible_methods.include? direction
+        send "colliding_#{direction}_of_#{sprite.class}", sprite
+      end
+    end
 
     class << self
       def init #:nodoc:
         @@hooks = Hash.new
         @@update_procs = Hash.new
+        @@collide_side_methods = Hash.new(Hash.new())
       end
       
       def method_added name #:nodoc:
@@ -549,14 +801,14 @@ module EasyRubygame
         when "key down"
           if parts[2]
              @@update_procs[self][parts[2].intern] = proc {
-                if EasyRubygame.keys[key]
+                if RISE.keys[key]
                   self.send name
                 end
               }
           else
             @@update_procs[self][name] = proc {
-                if EasyRubygame.keys
-                  keys_down = EasyRubygame.keys.reject {|key, value| !value}.keys
+                if RISE.keys
+                  keys_down = RISE.keys.reject {|key, value| !value}.keys
                   if keys_down.length > 0
                     self.send "keys_down", keys_down
                   end
@@ -573,7 +825,7 @@ module EasyRubygame
             raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
           end
           @@update_procs[self][name] = proc {
-            unless EasyRubygame.keys[key]
+            unless RISE.keys[key]
               self.send name
             end
           }
@@ -581,7 +833,7 @@ module EasyRubygame
         # collide
         when "collide"
           @@update_procs[self][name] = proc {
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
               end
@@ -592,10 +844,64 @@ module EasyRubygame
         when "collide with" 
           @@update_procs[self][name] = proc {
             klass = Object.const_get parts[2..-1].join('_').intern
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               sprite.update_rect
-              if sprite.kind_of? klass and self.collide_sprite? sprite and sprite.visible and self.visible and self != sprite
+              if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
                 self.send name, sprite
+                self.call_collide_sides sprite
+              end
+            end
+          }
+          
+        when "colliding bottom"
+          self.add_colliding "bottom", parts
+        when "colliding top"
+          self.add_colliding "top", parts
+        when "colliding left"
+          self.add_colliding "left", parts
+        when "colliding right"
+          self.add_colliding "right", parts
+        end
+      
+      end
+      
+      def merge_methods klass
+        if superclass == Sprite
+          return @@collide_side_methods[self][klass]
+        end
+        
+        return @@collide_side_methods[self][klass].merge superclass.merge_methods(klass)
+      end
+
+      def colliding_side_methods
+        methods = @@collide_side_methods[self]
+
+        return_methods = Hash.new(Set.new [])
+
+        methods.each do |klass, methods|
+          return_methods[klass] = self.merge_methods klass
+        end
+
+        return return_methods
+      end
+      
+      def add_colliding side, method_parts
+        klass_name = method_parts[3..-1].join('_').intern
+        
+        methods = @@collide_side_methods[self][klass_name] 
+        if methods == nil
+          methods = Set.new []
+        end
+        methods.add side
+        @@collide_side_methods[self][klass_name] = methods
+        
+        if @@update_procs[self]["collide_with_#{klass_name}"] == nil
+          @@update_procs[self]["collide_with_#{klass_name}"] = proc {
+            klass = Object.const_get klass_name
+            RISE.active_scene.sprites.each do |sprite|
+              sprite.update_rect
+              if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
+                self.call_collide_sides sprite
               end
             end
           }
@@ -617,4 +923,4 @@ module EasyRubygame
   end
 end
 
-EasyRubygame::Sprite.init
+RISE::Sprite.init

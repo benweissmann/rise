@@ -1,4 +1,4 @@
-module EasyRubygame
+module RISE
   class TextSprite < Sprite
     FONT_DIR = RESOURCE_DIR + 'fonts/'
 
@@ -11,12 +11,12 @@ module EasyRubygame
 
     # The color of the text. This can be an [r, g, b] color array,
     # the name of a color as a symbol, or any other format supported
-    # by EasyRubygame.to_color.
+    # by RISE.to_color.
     attr_accessor :color
 
     # The background color drawn behind the text. This can be an
     # [r, g, b] color array,  the name of a color as a symbol, or
-    # any other format supported by EasyRubygame.to_color.
+    # any other format supported by RISE.to_color.
     #
     # If +bg_color+ is nil, the text will be drawn with a transparent
     # background.
@@ -35,13 +35,13 @@ module EasyRubygame
       @text = config[:text] || '' 
       
       @color = if config[:color]
-        EasyRubygame.to_color(config[:color])
+        RISE.to_color(config[:color])
       else
         Color[:black]
       end
       
       @bg_color = if config[:bg_color]
-        EasyRubygame.to_color(config[:bg_color])
+        RISE.to_color(config[:bg_color])
       else
         nil
       end
@@ -64,8 +64,8 @@ module EasyRubygame
     def update_surface #:nodoc:
       file = TextSprite::FONT_DIR + font
       @ttf = TTF.new file, size
-      @color = EasyRubygame.to_color @color
-      @bg_color = EasyRubygame.to_color @bg_color unless @bg_color.nil?
+      @color = RISE.to_color @color
+      @bg_color = RISE.to_color @bg_color unless @bg_color.nil?
       self.surface = @ttf.render @text, true, @color, @bg_color
     end
   end

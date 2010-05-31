@@ -63,7 +63,7 @@ class Enemy < Sprite
   def shoot
   #if I'm not dead, add a bullet to the active scene
     if(self.name != :death_image)
-      EasyRubygame.active_scene.sprites.push(Enemy_Bullet.new(@x+@rect.width/2-2, @y+2))
+      RISE.active_scene.sprites.push(Enemy_Bullet.new(@x+@rect.width/2-2, @y+2))
       #then fire again
       self.wait(rand(@max_bullet_delay)) {self.shoot}
     end 

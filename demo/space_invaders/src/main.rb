@@ -25,4 +25,4 @@ list_of_enemies.each do |enemy|
 end
 
 
-EasyRubygame.active_scene = main_scene
+RISE.active_scene = main_scene

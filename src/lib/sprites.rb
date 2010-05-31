@@ -1,6 +1,6 @@
 ## ERG desc
-module EasyRubygame
-  ## EasyRubygame's base sprite class. All sprites should inherit from
+module RISE
+  ## RISE's base sprite class. All sprites should inherit from
   # Sprite.
   #
   # Classes that inherit from sprite can define "magic methods". These
@@ -142,13 +142,13 @@ module EasyRubygame
       
       if @x <= 0
         handle_side_touch :left
-      elsif @x + @rect.width >= EasyRubygame.window_width
+      elsif @x + @rect.width >= RISE.window_width
         handle_side_touch :right
       end
 
       if @y <= 0
         handle_side_touch :top
-      elsif @y + @rect.height >= EasyRubygame.window_height
+      elsif @y + @rect.height >= RISE.window_height
         handle_side_touch :bottom
       end
 
@@ -231,7 +231,7 @@ module EasyRubygame
     # Returns the integer distance between the right side of this
     # sprite and the right edge of the window.
     def distance_from_right
-      return EasyRubygame.window_width - @x - @rect.width
+      return RISE.window_width - @x - @rect.width
     end
 
     # Returns the integer distance between the top side of this
@@ -243,7 +243,7 @@ module EasyRubygame
     # Returns the integer distance between the bottom side of this
     # sprite and the bottom edge of the window.
     def distance_from_bottom
-      return EasyRubygame.window_height - @y - @rect.height
+      return RISE.window_height - @y - @rect.height
     end
 
     # Returns the smaller of:
@@ -273,8 +273,8 @@ module EasyRubygame
     # Returns true if no part of this sprite is onscreen, false
     # otherwise.
     def offscreen?
-      return (@x > EasyRubygame.window_width) ||
-             (@y > EasyRubygame.window_height) ||
+      return (@x > RISE.window_width) ||
+             (@y > RISE.window_height) ||
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
@@ -359,7 +359,7 @@ module EasyRubygame
     # Removes this sprite from the active scene. DOES NOT remove it
     # from any other scenes.
     def delete
-      EasyRubygame.active_scene.sprites.delete self
+      RISE.active_scene.sprites.delete self
     end
 
     # Returns a boolean representing the visibility of this sprite.
@@ -801,14 +801,14 @@ module EasyRubygame
         when "key down"
           if parts[2]
              @@update_procs[self][parts[2].intern] = proc {
-                if EasyRubygame.keys[key]
+                if RISE.keys[key]
                   self.send name
                 end
               }
           else
             @@update_procs[self][name] = proc {
-                if EasyRubygame.keys
-                  keys_down = EasyRubygame.keys.reject {|key, value| !value}.keys
+                if RISE.keys
+                  keys_down = RISE.keys.reject {|key, value| !value}.keys
                   if keys_down.length > 0
                     self.send "keys_down", keys_down
                   end
@@ -825,7 +825,7 @@ module EasyRubygame
             raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
           end
           @@update_procs[self][name] = proc {
-            unless EasyRubygame.keys[key]
+            unless RISE.keys[key]
               self.send name
             end
           }
@@ -833,7 +833,7 @@ module EasyRubygame
         # collide
         when "collide"
           @@update_procs[self][name] = proc {
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
               end
@@ -844,7 +844,7 @@ module EasyRubygame
         when "collide with" 
           @@update_procs[self][name] = proc {
             klass = Object.const_get parts[2..-1].join('_').intern
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               sprite.update_rect
               if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
                 self.send name, sprite
@@ -898,7 +898,7 @@ module EasyRubygame
         if @@update_procs[self]["collide_with_#{klass_name}"] == nil
           @@update_procs[self]["collide_with_#{klass_name}"] = proc {
             klass = Object.const_get klass_name
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               sprite.update_rect
               if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
                 self.call_collide_sides sprite
@@ -923,4 +923,4 @@ module EasyRubygame
   end
 end
 
-EasyRubygame::Sprite.init
+RISE::Sprite.init

@@ -48,7 +48,7 @@ class Ship < Sprite
   def shoot
     #position correction due to location being measured from the top left
     @curr_bullet = Player_Bullet.new(@x+@rect.width/2-2, @y-3)
-    EasyRubygame.active_scene.sprites.push(@curr_bullet)
+    RISE.active_scene.sprites.push(@curr_bullet)
   end
   
   #killing my self

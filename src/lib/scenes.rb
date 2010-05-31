@@ -1,4 +1,4 @@
-module EasyRubygame
+module RISE
   # Represents a group of sprites.
   class Scene
     # An array of sprites that belong to this scene.
@@ -10,7 +10,7 @@ module EasyRubygame
     #   resources/images and tiled to fill the background.
     # - If it represents a color (as an [r, g, b] array, the name
     #   of a color as a symbol, or any other format supported by
-    #   EasyRubygame.to_color), that color will be used as the
+    #   RISE.to_color), that color will be used as the
     #   background.
     # - If it is omitted, it defaults to a white background.
     def initialize(background = :white)
@@ -21,20 +21,20 @@ module EasyRubygame
     # Changes the background of this scene. See Scene.new for details
     # on how to specify a background.
     def background= bg
-      @background = Surface.new(EasyRubygame.screen.size)
+      @background = Surface.new(RISE.screen.size)
 
       if bg.kind_of? String
         image = Surface[bg]
         if image.nil?
           raise "Can't find background image #{bg}."
         end
-        0.step EasyRubygame.window_width, image.w do |x|
-          0.step EasyRubygame.window_height, image.h do |y|
+        0.step RISE.window_width, image.w do |x|
+          0.step RISE.window_height, image.h do |y|
             image.blit @background, [x, y]
           end
         end
       else
-        @background.fill EasyRubygame.to_color(bg)
+        @background.fill RISE.to_color(bg)
       end
     end
     
@@ -42,9 +42,9 @@ module EasyRubygame
     def draw event_queue #:nodoc:
       @sprites.update
     
-      @background.blit EasyRubygame.screen, [0,0], nil
+      @background.blit RISE.screen, [0,0], nil
       @sprites.each do |sprite|
-     	  sprite.draw(EasyRubygame.screen) if sprite.visible?
+     	  sprite.draw(RISE.screen) if sprite.visible?
      	#  if sprite.instance_of? Ball
      	    #@background.draw_line_a([0,0], [100,100], [0,0,0])
      	   # x_y_diff = [[0, 0], [0, sprite.image_height/2.0], [0, sprite.image_height], [sprite.image_width/2.0, 0], [sprite.image_width/2.0, sprite.image_height], [sprite.image_width, 0], [sprite.image_width, sprite.image_height/2.0], [sprite.image_width, sprite.image_height]]

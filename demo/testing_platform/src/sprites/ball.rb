@@ -1,19 +1,19 @@
 # Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
 #
-# This file is part of EasyRubygame.
+# This file is part of RISE.
 #
-# EasyRubygame is free software: you can redistribute it and/or modify
+# RISE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# EasyRubygame is distributed in the hope that it will be useful,
+# RISE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
+# License along with RISE, in a file called COPYING.LESSER.
 # in addition, your should have received a copy of the GNU General
 # Public License, in a file called COPYING. If you did not
 # receive a copy of either of these documents, see
@@ -49,7 +49,7 @@ class Ball < Sprite
 	end
 	
 	def pass_frame
-	  p EasyRubygame.keys
+	  p RISE.keys
 	end
 	
 	def colliding_top_of_Floor floor

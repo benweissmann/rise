@@ -1,4 +1,4 @@
-module EasyRubygame
+module RISE
   # Controlls playback of sound effect, music tracks, and other
   # sounds. Provides functionality to play/pause/stop sounds,
   # manipulate volume, and fade tracks in and out.
@@ -109,4 +109,4 @@ module EasyRubygame
   end
 end
 
-EasyRubygame::Sounds.init
+RISE::Sounds.init

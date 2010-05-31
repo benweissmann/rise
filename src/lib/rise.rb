@@ -1,19 +1,19 @@
 # Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
 #
-# This file is part of EasyRubygame.
+# This file is part of RISE.
 #
-# EasyRubygame is free software: you can redistribute it and/or modify
+# RISE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# EasyRubygame is distributed in the hope that it will be useful,
+# RISE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with EasyRubygame, in a file called COPYING.LESSER.
+# License along with RISE, in a file called COPYING.LESSER.
 # in addition, your should have received a copy of the GNU General
 # Public License, in a file called COPYING. If you did not
 # receive a copy of either of these documents, see
@@ -25,8 +25,8 @@ require 'lib/sprites'
 require 'lib/text'
 require 'lib/sounds'
 
-# Global EasyRubygame module. Escapsuates core functions and utilities.
-module EasyRubygame
+# Global RISE module. Escapsuates core functions and utilities.
+module RISE
   class << self
     # The Screen object that represents the game's window
     attr_accessor :screen
@@ -42,7 +42,7 @@ module EasyRubygame
     attr_accessor :window_width
 
     # A hash of key (Symbol) => pressed state (Boolean).
-    # So EasyRubygame.keys[:x] is true while the x key is down,
+    # So RISE.keys[:x] is true while the x key is down,
     # an false while it is up.
     attr_accessor :keys
 
@@ -50,19 +50,19 @@ module EasyRubygame
     # everywhere.
     attr_reader :storage
     
-    # Initializes EasyRubygame. Called automatically by runner.rb.
+    # Initializes RISE. Called automatically by runner.rb.
     def init #:nodoc:
       Rubygame.init
       TTF.setup
       
       properties = YAML.load_file(BASE_DIR + 'properties.yml')
-      EasyRubygame.window_height = properties['height']
-      EasyRubygame.window_width = properties['width']
+      RISE.window_height = properties['height']
+      RISE.window_width = properties['width']
 
       @screen = Screen.new [properties['width'], properties['height']]
       @screen.title = properties['title']
       @screen.show_cursor = true;
-      EasyRubygame.screen = screen
+      RISE.screen = screen
       
       @storage = {}
 
@@ -79,11 +79,11 @@ module EasyRubygame
 	    @sounds = {}
     end
 
-    # Runs the main EasyRubygame loop. Called automatically by runner.rb.
+    # Runs the main RISE loop. Called automatically by runner.rb.
     def run #:nodoc:
       @queue = Rubygame::EventQueue.new
       @queue.enable_new_style_events
-      EasyRubygame.keys = Hash.new false
+      RISE.keys = Hash.new false
 
       loop do
         @clock.tick
@@ -95,20 +95,20 @@ module EasyRubygame
             if event.key == :escape
               return
             else
-              EasyRubygame.keys[event.key] = true
+              RISE.keys[event.key] = true
             end
           when KeyReleased
-            EasyRubygame.keys[event.key] = false
+            RISE.keys[event.key] = false
           end
 
-          if EasyRubygame.active_scene.nil?
-            raise "EasyRubygame.active_scene has not been set in main.rb."
+          if RISE.active_scene.nil?
+            raise "RISE.active_scene has not been set in main.rb."
           end
 
-          EasyRubygame.active_scene.propagate_event event
+          RISE.active_scene.propagate_event event
         end
-        EasyRubygame.active_scene.draw @queue
-        EasyRubygame.screen.update
+        RISE.active_scene.draw @queue
+        RISE.screen.update
       end
     end
     

@@ -1,11 +1,18 @@
-module EasyRubygame
-  # EasyRubygame's base sprite class. All sprites should inherit from
+## ERG desc
+module RISE
+  ## RISE's base sprite class. All sprites should inherit from
   # Sprite.
   #
   # Classes that inherit from sprite can define "magic methods". These
   # methods are called automatically based on their name.
   #
   # +pass_frame+::     Called every frame
+  #
+  # +touch_side+::     Called when this sprite touches any side of
+  #                    a Scene.
+  # +touch_*+::        * can be one of top, bottom, left, or
+  #                    right. Called when this sprites touches the
+  #                    specified side of a Scene.
   # +key_pressed_*+::  Called when a specific key is pressed. For
   #                    example, "key_pressed_k" is called when the
   #                    "k" key is pressed.
@@ -35,10 +42,10 @@ module EasyRubygame
     include Sprites::Sprite
     include EventHandler::HasEventHandler
 
-    # The current x position of the top-left corner of this sprite.
+    ## The current x position of the top-left corner of this sprite.
     attr_accessor :x
 
-    # The current y position of the top-left corner of this sprite.
+    ## The current y position of the top-left corner of this sprite.
     attr_accessor :y
 
     # The x position of this sprite will be adjusted by this amount
@@ -76,6 +83,7 @@ module EasyRubygame
     # Name of the current image
     attr_reader :current_image
 
+	  ## 
 	  # Sets up the sprite. Sets positions, velocities, and
 	  # accelerations to 0. The specified img_src is loaded and used
 	  # as the sprite's default image. 
@@ -132,28 +140,38 @@ module EasyRubygame
         update_movement
       end
       
-      begin
-        if @x <= 0
-          self.touch_left
-        elsif @x + @rect.width >= EasyRubygame.window_width
-          self.touch_right
-        end
+      if @x <= 0
+        handle_side_touch :left
+      elsif @x + @rect.width >= RISE.window_width
+        handle_side_touch :right
+      end
 
-        if @y <= 0
-          self.touch_top
-        elsif @y + @rect.height >= EasyRubygame.window_height
-          self.touch_bottom
-        end
-      rescue NoMethodError
-        # ignore NoMethodErrors -- the subclass might not have
-        # defined touch_* methods
+      if @y <= 0
+        handle_side_touch :top
+      elsif @y + @rect.height >= RISE.window_height
+        handle_side_touch :bottom
       end
 
       unless @rect.nil?
-        self.update_rect
+        update_rect
       end
       pass_frame if @visible
     end
+    
+    private
+    
+    # Calls touch_<side> and touch_side.
+    def handle_side_touch side
+      safe_call "touch_#{side}".intern
+      safe_call :touch_side
+    end
+    
+    # Calls a method iff this sprite responds to the given method.
+    def safe_call method
+      send method if respond_to? method
+    end
+    
+    public
     
     def update_movement
       @prev_x, @prev_y = @x, @y
@@ -163,6 +181,36 @@ module EasyRubygame
       
       @x_velocity += @x_acceleration
       @y_velocity += @y_acceleration
+      
+      if self.still?
+        change_image :not_moving if @images.has_key? :not_moving
+      elsif @x_velocity.abs > @y_velocity.abs
+        if @x_velocity > 0 and @images.has_key? :moving_right
+          change_image :moving_right
+        elsif @x_velocity < 0 and @images.has_key? :moving_left
+          change_image :moving_left
+        end
+      else
+        if @y_velocity > 0 and @images.has_key? :moving_down
+          change_image :moving_down
+        elsif @y_velocity < 0 and @images.has_key? :moving_up
+          change_image :moving_up
+        end
+      end
+    end
+    
+    # Returns true if this sprite is not moving, false otherwise.
+    # 
+    # See also: Sprite#moving?
+    def still?
+      return ((@x_velocity == 0 and @y_velocity == 0) or @can_move == false)
+    end
+    
+    # Returns true if this sprite is moving, false otherwise.
+    #
+    # See also: Sprite#still?
+    def moving?
+      return (not still?)
     end
 
     # Updates @rect to reflect current @x and @y.
@@ -173,6 +221,7 @@ module EasyRubygame
     def pass_frame #:nodoc:
     end
 
+    ##
     # Returns the integer distance between the left side of this
     # sprite and the left edge of the window.
     def distance_from_left
@@ -182,7 +231,7 @@ module EasyRubygame
     # Returns the integer distance between the right side of this
     # sprite and the right edge of the window.
     def distance_from_right
-      return EasyRubygame.window_width - @x - @rect.width
+      return RISE.window_width - @x - @rect.width
     end
 
     # Returns the integer distance between the top side of this
@@ -194,7 +243,7 @@ module EasyRubygame
     # Returns the integer distance between the bottom side of this
     # sprite and the bottom edge of the window.
     def distance_from_bottom
-      return EasyRubygame.window_height - @y - @rect.height
+      return RISE.window_height - @y - @rect.height
     end
 
     # Returns the smaller of:
@@ -224,8 +273,8 @@ module EasyRubygame
     # Returns true if no part of this sprite is onscreen, false
     # otherwise.
     def offscreen?
-      return (@x > EasyRubygame.window_width) ||
-             (@y > EasyRubygame.window_height) ||
+      return (@x > RISE.window_width) ||
+             (@y > RISE.window_height) ||
              (@x < -@rect.width) ||
              (@y < -@rect.height)
     end
@@ -258,6 +307,14 @@ module EasyRubygame
     # Adds an image to the list of images this sprite uses. "name" is
     # a symbol that will be used in Sprite#change_image. "file" is
     # the name of a file in resources/images.
+    #
+    # Certain image names have special significance.
+    # +:default+ ::   The default sprite, set to the argument
+    #                 passed to Sprite#initialize.
+    # +:moving_*+ ::  * is one of left, right, up, or down. A sprite
+    #                 will automatically change to this image when it
+    #                 is moving in the given direction, as determined
+    #                 by its velocity.
     def add_image name, file
 	    surface = Surface[file]
 	    if surface
@@ -297,6 +354,12 @@ module EasyRubygame
     # Makes an invisible sprite visible again. See Sprite#hide.
     def show
       @visible = true
+    end
+    
+    # Removes this sprite from the active scene. DOES NOT remove it
+    # from any other scenes.
+    def delete
+      RISE.active_scene.sprites.delete self
     end
 
     # Returns a boolean representing the visibility of this sprite.
@@ -374,7 +437,6 @@ module EasyRubygame
     private
     
     # Called every frame to make Sprite#wait work
-    # Called every frame to make Sprite#wait work
     def update_wait #:nodoc:
       @code_to_execute.collect! do |time_and_code|
         time, code = time_and_code
@@ -396,7 +458,7 @@ module EasyRubygame
     public
     
     # Stops this sprite from moving due to its velocity or
-    # acceleration. It can stil be move by changing @x and @y.
+    # acceleration. It can still be moved by changing @x and @y.
     # See Sprite#go
     def stop
       @can_move = false
@@ -739,14 +801,14 @@ module EasyRubygame
         when "key down"
           if parts[2]
              @@update_procs[self][parts[2].intern] = proc {
-                if EasyRubygame.keys[key]
+                if RISE.keys[key]
                   self.send name
                 end
               }
           else
             @@update_procs[self][name] = proc {
-                if EasyRubygame.keys
-                  keys_down = EasyRubygame.keys.reject {|key, value| !value}.keys
+                if RISE.keys
+                  keys_down = RISE.keys.reject {|key, value| !value}.keys
                   if keys_down.length > 0
                     self.send "keys_down", keys_down
                   end
@@ -763,7 +825,7 @@ module EasyRubygame
             raise "Missing the key in the name of some key_up method (ie you have key_pressed, not key_pressed_left)."
           end
           @@update_procs[self][name] = proc {
-            unless EasyRubygame.keys[key]
+            unless RISE.keys[key]
               self.send name
             end
           }
@@ -771,7 +833,7 @@ module EasyRubygame
         # collide
         when "collide"
           @@update_procs[self][name] = proc {
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               if self.collide_sprite? sprite and self != sprite
                 self.send name, sprite
               end
@@ -782,7 +844,7 @@ module EasyRubygame
         when "collide with" 
           @@update_procs[self][name] = proc {
             klass = Object.const_get parts[2..-1].join('_').intern
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               sprite.update_rect
               if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
                 self.send name, sprite
@@ -836,7 +898,7 @@ module EasyRubygame
         if @@update_procs[self]["collide_with_#{klass_name}"] == nil
           @@update_procs[self]["collide_with_#{klass_name}"] = proc {
             klass = Object.const_get klass_name
-            EasyRubygame.active_scene.sprites.each do |sprite|
+            RISE.active_scene.sprites.each do |sprite|
               sprite.update_rect
               if sprite.visible and sprite.kind_of? klass and self.collide_sprite? sprite and self.visible and self != sprite
                 self.call_collide_sides sprite
@@ -861,4 +923,4 @@ module EasyRubygame
   end
 end
 
-EasyRubygame::Sprite.init
+RISE::Sprite.init

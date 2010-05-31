@@ -1,6 +1,6 @@
-= EasyRubygame
+= RISE: Ruby Interactive Sprite Environment
 
-http://benweissmann.github.com/EasyRubygame
+http://benweissmann.github.com/rise
 
 Copyright (C) 2010 Ben Weissmann <benweissmann@gmail.com>
 
@@ -13,7 +13,7 @@ benweissmann@gmail.com
 
 == Use
 
-src/ contains the default directory structure for EasyRubygame projects,
+src/ contains the default directory structure for RISE projects,
 including the framework itself. Copy this directory for each project,
 and modify the contents of the "src" folder. Then, run "runner.rb"
 
@@ -34,7 +34,7 @@ its main.rb in test/new_main.rb. Make any changes there.
 == Contributing
 
 Grab the latest using git. Instructions at
-http://github.com/benweissmann/EasyRubygame. Submit paches to the contact
+http://github.com/benweissmann/rise. Submit paches to the contact
 address listed above, or fork the repository and submit a pull request. Thanks
 for contributing!
 
@@ -57,7 +57,7 @@ listed below.
 
 
 === Projects
-The following projects and libraries are used by EasyRubygame.
+The following projects and libraries are used by RISE.
 
 - Rubygame (http://rubygame.org/)
 - Ruby (http://www.ruby-lang.org/en/)
@@ -67,18 +67,18 @@ The following projects and libraries are used by EasyRubygame.
 
 == License
 
-EasyRubygame is free software: you can redistribute it and/or modify
+RISE is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as
 published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.
 
-EasyRubygame is distributed in the hope that it will be useful,
+RISE is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-License along with EasyRubygame, in a file called COPYING.LESSER.
+License along with RISE, in a file called COPYING.LESSER.
 in addition, your should have received a copy of the GNU General
 Public License, in a file called COPYING. If you did not
 receive a copy of either of these documents, see

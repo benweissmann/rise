@@ -18,7 +18,7 @@ class Missile < Sprite
   def pass_frame
     # If this missile is offscreen, delete it from the active scene.
     if offscreen?
-      EasyRubygame.active_scene.sprites.delete(self)
+      RISE.active_scene.sprites.delete(self)
     end
   end
   
