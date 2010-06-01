@@ -291,16 +291,7 @@ module RISE
     
     # depricated, remove in a few versions
     def name
-      puts '       ______________________________________
-      / WARNING: name is depricated,         \
-      \ use current_image instead            /
-       --------------------------------------
-              \   ^__^
-               \  (oo)\_______
-                  (__)\       )\/\
-                      ||----w |
-                      ||     ||
-      '
+      RISE.deprecate 'name', 'current_image'
       return self.current_image
     end
     
@@ -316,16 +307,19 @@ module RISE
     #                 is moving in the given direction, as determined
     #                 by its velocity.
     def add_image name, file
-	    surface = Surface[file]
-	    if surface
-	      @images[name] = surface
-	    else
-        raise "ERROR. Could not find the image \"#{file}.\" Exiting immediately. Make sure that \"#{file}\" is in resources/sprites."
+      surface = Surface[file]
+      if surface
+        @images[name] = surface
+      else
+        raise "Could not find the image \"#{file}.\" " +
+              "Make sure \"#{file}\" is in resources/sprites."
       end
     end
     
-    # adds a hash of names to file locations to the images array.
-    # like this: self.add_images {:a => "a.gif", :b => "b.gif"}
+    # Adds a hash of names to file locations to the images array.
+    # 
+    # Example:
+    # <code>self.add_images {:a => "a.gif", :b => "b.gif"}</code>
     def add_images names_and_files
       names_and_files.each do |name, file_loc|
         self.add_image(name, file_loc)
@@ -377,18 +371,27 @@ module RISE
       @start_time = Time.new.to_i
     end
     
-    # will check every frame to see if pred is true. if so, sprite 
-    # will execute function. For example,
-    # <tt> self.add_wait_until lambda {@x > 100}, lambda {puts "hi there!"} </tt>
-    # will puts "hi there!" after x gets past 100. 
-    # Lambda is a method that turns code into an object that can be
-    # easily passed to methods. pred should return a boolean
-    def add_wait_until pred, function
+    # Will check every frame to see if pred is true. If so, sprite 
+    # will execute function.
+    #
+    # For example,
+    # <tt> self.add_wait_until lambda {@x > 100},
+    #                          lambda {puts "hi there!"} </tt>
+    # will puts "hi there!" after x gets past 100.
+    #
+    # Both +pred+ and +function+ should be either a Proc. +pred+ must
+    # return a Boolean.
+    def wait_until pred, function
       @wait_untils.push [pred, function]
     end
+
+    # Deprecated; use Sprite#wait_until instead.
+    def add_wait_until pred, function #:nodoc:
+      RISE.deprecate('Sprite#add_wait_until', 'Sprite#wait_until');
+      wait_until pred, function
+    end
     
-    #:nodoc:
-    def check_and_execute_wait_untils
+    def check_and_execute_wait_untils #:nodoc:
       @wait_untils.collect! do |pred_fn_pair|
         pred = pred_fn_pair[0]
         fn = pred_fn_pair[1]
@@ -420,17 +423,7 @@ module RISE
     
     # depricated, see clear_waits
     def remove_waits
-      puts '     ______________________________________
-      / WARNING: remove_waits is depricated, \
-      \ use clear_waits instead              /
-       --------------------------------------
-              \   ^__^
-               \  (oo)\_______
-                  (__)\       )\/\
-                      ||----w |
-                      ||     ||
-      '
-      
+      RISE.deprecate 'remove_waits', 'clear_waits'
       self.clear_waits
     end
 

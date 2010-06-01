@@ -51,7 +51,7 @@ Surface.autoload_dirs = [ RESOURCE_DIR + 'images/' ]
 Sound.autoload_dirs = [ RESOURCE_DIR + 'sounds/']
 
 # Load RISE
-require 'lib/easy-rubygame'
+require 'lib/rise'
 include RISE
 
 # Run Rubygame initialization

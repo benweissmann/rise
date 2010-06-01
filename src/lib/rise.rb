@@ -158,6 +158,17 @@ module RISE
       
       @active_scene = new_scene
     end
+
+    # Reports a method as deprecated. Should be called ONLY from
+    # inside a deprecated method, else line number reporting
+    # won't work.
+    #
+    # +old+ :: Name of deprecated method
+    # +new+ :: Name of method to use instead
+    def deprecate old, new #:nodoc:
+      puts "WARNING: #{old} is deprecated; use #{new} instead."
+      puts "From #{caller[1]}" 
+    end
   end
 end
 
