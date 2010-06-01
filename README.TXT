@@ -19,24 +19,24 @@ and modify the contents of the "src" folder. Then, run "runner.rb"
 
 == Demo
 
-Run "test.sh" to run the demo, a game of pong. Use the arrow keys to control
-the paddles.
+Run "rake demo" to select from a list of demos. Use "rake demo[n]" to
+run demo n (numbers are shown when running "rake demo")
 
 == Developing
 
 src/lib/ contains the main part of the framework.
 
-test/ contains a testbed. Running test.sh copies the current contents of
-src/ into test/, then runs the test application. Note that becuase the
-framework includes a default src/main.rb, the test application stores
-its main.rb in test/new_main.rb. Make any changes there.
+test/ contains a testbed. Running test.sh copies the current contents 
+of src/ into test/, then runs the test application. Note that becuase 
+the framework includes a default src/main.rb, the test application 
+stores its main.rb in test/new_main.rb. Make any changes there.
 
 == Contributing
 
 Grab the latest using git. Instructions at
 http://github.com/benweissmann/rise. Submit paches to the contact
-address listed above, or fork the repository and submit a pull request. Thanks
-for contributing!
+address listed above, or fork the repository and submit a pull 
+request. Thanks for contributing!
 
 == Credits
 
@@ -82,4 +82,4 @@ License along with RISE, in a file called COPYING.LESSER.
 in addition, your should have received a copy of the GNU General
 Public License, in a file called COPYING. If you did not
 receive a copy of either of these documents, see
-<http://www.gnu.org/licenses/>.
+http://www.gnu.org/licenses/.
