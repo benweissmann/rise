@@ -1,4 +1,3 @@
-## ERG desc
 module RISE
   ## RISE's base sprite class. All sprites should inherit from
   # Sprite.
@@ -83,10 +82,9 @@ module RISE
     # Name of the current image
     attr_reader :current_image
 
-	  ## 
-	  # Sets up the sprite. Sets positions, velocities, and
-	  # accelerations to 0. The specified img_src is loaded and used
-	  # as the sprite's default image. 
+    # Sets up the sprite. Sets positions, velocities, and
+    # accelerations to 0. The specified img_src is loaded and used
+    # as the sprite's default image. 
     def initialize(img_src)
       super()
       @x = @y = @prev_x = @prev_y = @x_velocity = @y_velocity = 
@@ -183,18 +181,18 @@ module RISE
       @y_velocity += @y_acceleration
       
       if self.still?
-        change_image :not_moving if @images.has_key? :not_moving
+        safe_change_image :not_moving
       elsif @x_velocity.abs > @y_velocity.abs
-        if @x_velocity > 0 and @images.has_key? :moving_right
-          change_image :moving_right
-        elsif @x_velocity < 0 and @images.has_key? :moving_left
-          change_image :moving_left
+        if @x_velocity > 0
+          safe_change_image :moving_right
+        elsif @x_velocity < 0
+          safe_change_image :moving_left
         end
       else
-        if @y_velocity > 0 and @images.has_key? :moving_down
-          change_image :moving_down
-        elsif @y_velocity < 0 and @images.has_key? :moving_up
-          change_image :moving_up
+        if @y_velocity > 0
+          safe_change_image :moving_down
+        elsif @y_velocity < 0
+          safe_change_image :moving_up
         end
       end
     end
@@ -329,14 +327,26 @@ module RISE
     # Changes the image this sprite is currently using to the image
     # associated with the given name (by Sprite#add_image)
     def change_image name
-      @current_image = name
       surface = @images[name]
       if surface
         self.surface = @images[name]
+        @current_image = name
       else
-        raise "ERROR. No image added with the name \"#{name}\""
+        raise ArgumentError, "No image added with the name \"#{name}\""
       end
     end
+
+    private
+
+    # Same as Sprite#change_image, but does nothing if the image
+    # hasn't been added.
+    def safe_change_image name
+      change_image name
+    rescue ArgumentError
+      # ignore
+    end
+
+    public
 
     # Makes this sprite invisible. While a sprite is invisible, none
     # of its magic methods (including pass_frame) are called, and it
@@ -902,15 +912,23 @@ module RISE
       end
 
       def update_procs #:nodoc:
-        procs = @@update_procs[self] 
-        procs = (superclass.update_procs || {}).merge(procs) unless superclass == Sprite
-        return procs
+        merge_up @@update_procs[self], :update_procs
       end
 
       def hooks #:nodoc:
-        hooks = @@hooks[self]
-        hooks = (superclass.hooks || {}).merge(hooks) unless superclass == Sprite
-        return hooks
+        merge_up @@hooks[self], :hooks
+      end
+
+      private
+
+      # Takes a hash of items, +items+, and merges them with the
+      # result of invoking +superclass_method+ on this class's
+      # superclass. Stops merging if the superclass is Sprite.
+      def merge_up items, superclass_method
+        unless superclass == Sprite
+          items = (superclass.send(superclass_method) || {}).merge items
+        end
+        return items
       end
     end
   end
