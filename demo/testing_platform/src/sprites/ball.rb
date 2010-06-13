@@ -20,81 +20,79 @@
 # <http://www.gnu.org/licenses/>.
 
 class Ball < Sprite
-	def initialize start_x, start_y, start_x_vel, start_y_vel
-		super('portal_swirl.gif')
-		@x = start_x
-		@y = start_y
-		#@x_velocity = start_x_vel
-		@y_velocity = 5
-		
-		self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
-		self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
-		
-		#self.play_animation(:explode)
-		#self.play_animation(:unexplode)
-		self.wait 25 do
-		  self.stop_all_animations(:default)
-		end
-		#self.play_animation(:unexplode)
-		
-		
-		#self.y_acceleration = 1
-		#self.x_acceleration = 1
-		self.x_velocity = 4
-		
-	end
-	
-	def key_pressed_1
-	  exit
-	end
-	
-	def pass_frame
-	  p RISE.keys
-	end
-	
-	def colliding_top_of_Floor floor
-	  #puts "top"
-	  @y_velocity *= -1
-	end
-	
-	def colliding_bottom_of_Floor floor
-	  #puts "bottom"
-	  @y_velocity *= -1
-	end
-	
-	def colliding_right_of_Floor floor
-	  #puts "right"
-	  @x_velocity *= -1
-	end
+  def initialize start_x, start_y, start_x_vel, start_y_vel
+    super('ball.gif')
+    @x = start_x
+    @y = start_y
+    #@x_velocity = start_x_vel
+    @y_velocity = 5
+    
+    self.add_animation(:explode, ["explode1.gif", "explode2.gif", "explode3.gif"], [20, 20, 20])
+    self.add_animation(:unexplode, ["explode3.gif", "explode2.gif", "explode1.gif", :default], [200, 20, 20])
+    
+    #self.play_animation(:explode)
+    #self.play_animation(:unexplode)
+    self.wait 25 do
+      self.stop_all_animations(:default)
+    end
+    #self.play_animation(:unexplode)
+    
+    
+    #self.y_acceleration = 1
+    #self.x_acceleration = 1
+    self.x_velocity = 4
+  end
+  
+  def key_pressed_1
+    exit
+  end
+  
+  def pass_frame
+  end
+  
+  def colliding_top_of_Floor floor
+    #puts "top"
+    @y_velocity *= -1
+  end
+  
+  def colliding_bottom_of_Floor floor
+    #puts "bottom"
+    @y_velocity *= -1
+  end
+  
+  def colliding_right_of_Floor floor
+    #puts "right"
+    @x_velocity *= -1
+  end
   
   def colliding_left_of_Floor floor
-	  #puts "left"
-	  @x_velocity *= -1
-	end
+    #puts "left"
+    @x_velocity *= -1
+  end
 
-		def colliding_top_of_New_Floor floor
-  	  puts "top"
-  	  @y_velocity *= -1
-  	end
+  def colliding_top_of_New_Floor floor
+    puts "top"
+    @y_velocity *= -1
+  end
 
-  	def colliding_bottom_of_New_Floor floor
-  	  puts "bottom"
-  	  @y_velocity *= -1
-  	end
+  def colliding_bottom_of_New_Floor floor
+    puts "bottom"
+    @y_velocity *= -1
+  end
 
-  	def colliding_right_of_New_Floor floor
-  	  puts "right"
-  	  @x_velocity *= -1
-  	end
+  def colliding_right_of_New_Floor floor
+    puts "right"
+    @x_velocity *= -1
+  end
 
   def colliding_left_of_New_Floor floor
-  	  puts "left"
-  	  @x_velocity *= -1
-  	end
+    puts "left"
+    @x_velocity *= -1
+  end
 
   #def collide_with_Floor floor
-   # self.y_velocity = 0
-   # self.y = floor.y-self.rect.height
+  # self.y_velocity = 0
+  # self.y = floor.y-self.rect.height
   #end
 
   def key_pressed_left

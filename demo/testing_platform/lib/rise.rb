@@ -24,6 +24,7 @@ require 'lib/scenes'
 require 'lib/sprites'
 require 'lib/text'
 require 'lib/sounds'
+require 'lib/timer'
 
 # Global RISE module. Escapsuates core functions and utilities.
 module RISE
@@ -33,7 +34,7 @@ module RISE
 
     # The scene that's currently being drawn to the screen. Change
     # this to change the scene.
-    attr_accessor:active_scene
+    attr_accessor :active_scene
 
     # The height of the game window
     attr_accessor :window_height
@@ -87,6 +88,7 @@ module RISE
 
       loop do
         @clock.tick
+        Timer.pass_frame
         @queue.each do |event|
           case event
           when QuitEvent
@@ -142,7 +144,8 @@ module RISE
       # rgb array / enumerable
       elsif obj.kind_of? Enumerable and obj.length == 3
         return obj.to_a
-      # can we make it a string? if so, look it up in the global color palette
+      # can we make it a string? if so, look it up in the global color
+      # palette
       elsif obj.respond_to? :to_s
         color = Color[obj.to_s.intern]
       end
@@ -157,6 +160,17 @@ module RISE
       end
       
       @active_scene = new_scene
+    end
+
+    # Reports a method as deprecated. Should be called ONLY from
+    # inside a deprecated method, else line number reporting
+    # won't work.
+    #
+    # +old+ :: Name of deprecated method
+    # +new+ :: Name of method to use instead
+    def deprecate old, new #:nodoc:
+      puts "WARNING: #{old} is deprecated; use #{new} instead."
+      puts "From #{caller[1]}" 
     end
   end
 end
